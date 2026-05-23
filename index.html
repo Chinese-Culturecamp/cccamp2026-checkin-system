@@ -5,8 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link rel="icon" type="image/jpeg" href="https://i.imgur.com/CA4i39D.jpeg">
-<link rel="apple-touch-icon" href="https://i.imgur.com/CA4i39D.jpeg">
+  <meta name="apple-mobile-web-app-title" content="CCC Check-in">
+  <link rel="icon" type="image/jpeg" href="https://i.imgur.com/CA4i39D.jpeg">
+  <link rel="apple-touch-icon" href="https://i.imgur.com/CA4i39D.jpeg">
   <title>寻昔纪远 · Check-in</title>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
   <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
@@ -284,15 +285,8 @@ function enterApp() {
   document.getElementById('nameLabel').textContent = currentRoleName;
   document.getElementById('roleLabel2').textContent = roleText;
   document.getElementById('nameLabel2').textContent = currentRoleName;
-
-  if (currentRole === 'team') {
-    document.getElementById('sessionSelector').classList.add('show');
-  }
-
-  if (currentRole === 'admin' || currentRole === 'team' || currentRole === 'registration') {
-    document.getElementById('navTabs').classList.add('show');
-  }
-
+  if (currentRole === 'team') document.getElementById('sessionSelector').classList.add('show');
+  document.getElementById('navTabs').classList.add('show');
   showView('scannerView');
   startScanner();
 }
@@ -332,7 +326,7 @@ function onScanSuccess(decodedText) {
   processQR(decodedText);
 }
 
-async function processQR(raw) {
+function processQR(raw) {
   let id = raw.trim();
   try {
     const u = new URL(raw);
@@ -349,68 +343,10 @@ async function processQR(raw) {
   window.location.href = url;
 }
 
-  showLoading(true);
-  try {
-    let params = { id };
-if (currentRole === 'admin') { params.action = 'checkin_crew'; params.pin = currentPin; }
-else if (currentRole === 'registration') { params.action = 'checkin_participant'; params.pin = currentPin; }
-else if (currentRole === 'team') { params.action = 'checkin_team'; params.pin = currentPin; params.session_type = selectedSession; }
-
-    const url = buildURL(params);
-    const res = await fetch(url, { redirect: 'follow' });
-    const html = await res.text();
-    showLoading(false);
-    parseAndShowResult(html);
-  } catch(e) {
-    showLoading(false);
-    showResult('❌', 'error', 'Connection Error', '', '', '', '');
-  }
-}
-
 function buildURL(params) {
   const u = new URL(WEB_APP_URL);
   Object.entries(params).forEach(([k,v]) => u.searchParams.set(k, v));
   return u.toString();
-}
-
-function parseAndShowResult(html) {
-  const parser = new DOMParser();
-  const doc = parser.parseFromString(html, 'text/html');
-  const icon = doc.querySelector('.icon')?.textContent?.trim() || '❌';
-  const status = doc.querySelector('.status')?.textContent?.trim() || 'Error';
-  const nameCN = doc.querySelector('.name-cn')?.textContent?.trim() || '';
-  const nameEN = doc.querySelector('.name-en')?.textContent?.trim() || '';
-  const role = doc.querySelector('.role')?.textContent?.trim() || '';
-  const detail = doc.querySelector('.detail')?.textContent?.trim() || '';
-  const isSuccess = icon.includes('✅');
-  const isWarn = icon.includes('⚠️');
-  const cls = isSuccess ? 'success' : isWarn ? 'warning' : 'error';
-  showResult(icon, cls, status, nameCN, nameEN, role, detail);
-  if (isSuccess) startCountdown(4);
-}
-
-function showResult(icon, cls, status, nameCN, nameEN, role, detail) {
-  document.getElementById('resultIcon').textContent = icon;
-  document.getElementById('resultStatus').textContent = status;
-  document.getElementById('resultStatus').className = 'result-status ' + cls;
-  document.getElementById('resultNameCN').textContent = nameCN;
-  document.getElementById('resultNameEN').textContent = nameEN;
-  document.getElementById('resultRole').textContent = role;
-  document.getElementById('resultDetail').textContent = detail;
-  document.getElementById('resultDivider').style.display = nameCN ? 'block' : 'none';
-  document.getElementById('resultCard').classList.add('show');
-  document.getElementById('resumeBtn').style.display = 'block';
-}
-
-function startCountdown(sec) {
-  clearInterval(countdownTimer);
-  let n = sec;
-  document.getElementById('countdown').textContent = `Resuming in ${n}s...`;
-  countdownTimer = setInterval(() => {
-    n--;
-    if (n <= 0) { clearInterval(countdownTimer); document.getElementById('countdown').textContent = ''; resumeScanner(); }
-    else document.getElementById('countdown').textContent = `Resuming in ${n}s...`;
-  }, 1000);
 }
 
 function resumeScanner() {
@@ -446,12 +382,10 @@ function renderTeamStatus(doc) {
   const rows = doc.querySelectorAll('tbody tr');
   const headers = Array.from(doc.querySelectorAll('thead th'));
   if (!rows.length) { document.getElementById('statusBody').innerHTML = '<div style="text-align:center;padding:40px 0;color:var(--muted);font-size:12px;">No data.</div>'; return; }
-
   const sessions = [];
   headers.forEach((h, i) => { if (i >= 8) sessions.push({ name: h.textContent, col: i }); });
   const today = getTodayKey();
   const todaySessions = sessions.filter(s => isSessionToday(s.name, today));
-
   let html = '<div class="status-section">';
   if (todaySessions.length) {
     html += '<div class="status-section-title">Today</div><div class="stat-row">';
@@ -480,12 +414,10 @@ function renderTableStatus(doc) {
   const rows = doc.querySelectorAll('tbody tr');
   const headers = Array.from(doc.querySelectorAll('thead th'));
   if (!rows.length) { document.getElementById('statusBody').innerHTML = '<div style="text-align:center;padding:40px 0;color:var(--muted);font-size:12px;">No data.</div>'; return; }
-
   const sessionCols = [];
   headers.forEach((h, i) => { if (i >= 8) sessionCols.push({ name: h.textContent, col: i }); });
   const today = getTodayKey();
   const todayCols = sessionCols.filter(s => isSessionToday(s.name, today));
-
   let html = '<div class="status-section"><div class="status-section-title">Overview</div><div class="stat-row">';
   html += `<div class="stat-box"><div class="stat-num">${rows.length}</div><div class="stat-label">Total</div></div>`;
   todayCols.forEach(s => {
@@ -556,7 +488,6 @@ function doLogout() {
   showView('loginView');
 }
 
-// API
 async function getAPI(params) {
   const u = new URL(WEB_APP_URL);
   Object.entries(params).forEach(([k,v]) => u.searchParams.set(k, v));
