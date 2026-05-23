@@ -348,7 +348,7 @@ else if (currentRole === 'registration') { params.action = 'checkin_participant'
 else if (currentRole === 'team') { params.action = 'checkin_team'; params.pin = currentPin; params.session_type = selectedSession; }
 
     const url = buildURL(params);
-    const res = await fetch(url);
+    const res = await fetch(url, { redirect: 'follow' });
     const html = await res.text();
     showLoading(false);
     parseAndShowResult(html);
