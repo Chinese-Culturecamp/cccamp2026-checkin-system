@@ -2,270 +2,562 @@
 <html lang="zh">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Crew Check-in</title>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="icon" type="image/jpeg" href="https://i.imgur.com/CA4i39D.jpeg">
+<link rel="apple-touch-icon" href="https://i.imgur.com/CA4i39D.jpeg">
+  <title>寻昔纪远 · Check-in</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    :root {
+      --gold: #c8a96e;
+      --gold2: rgba(200,169,110,0.4);
+      --dark: #1a0e08;
+      --card-bg: rgba(20,10,5,0.82);
+      --text: #f0e6d3;
+      --muted: rgba(240,230,211,0.5);
+    }
     body {
       min-height: 100vh;
-      background: #1a0e08;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-      overflow: hidden;
+      background: var(--dark);
       font-family: 'Montserrat', sans-serif;
+      color: var(--text);
+      position: relative;
+      overflow-x: hidden;
     }
     .bg {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
+      position: fixed; top:0; left:0; width:100%; height:100%;
       background-image: url('https://i.imgur.com/8I0PjjL.jpeg');
-      background-size: cover;
-      background-position: center;
-      opacity: 0.4;
-      z-index: 0;
+      background-size: cover; background-position: center;
+      opacity: 0.35; z-index: 0;
     }
-    .container {
-      position: relative;
-      z-index: 1;
-      width: 92%;
-      max-width: 400px;
-      text-align: center;
-      padding: 40px 0;
-    }
-    .title {
-      font-family: 'Noto Serif SC', serif;
-      font-size: 22px;
-      color: #f0e6d3;
-      letter-spacing: 4px;
-      margin-bottom: 4px;
-    }
-    .subtitle {
-      font-size: 11px;
-      color: rgba(200, 169, 110, 0.7);
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      margin-bottom: 32px;
-    }
-    .btn {
-      width: 100%;
-      padding: 16px;
-      background: rgba(200, 169, 110, 0.15);
-      border: 1px solid rgba(200, 169, 110, 0.4);
-      border-radius: 8px;
-      color: #c8a96e;
+    .view { display: none; min-height: 100vh; position: relative; z-index: 1; }
+    .view.active { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px 20px; }
+
+    .login-title { font-family: 'Noto Serif SC', serif; font-size: 26px; letter-spacing: 5px; color: var(--text); margin-bottom: 4px; text-align: center; }
+    .login-sub { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); margin-bottom: 36px; text-align: center; }
+    .card { background: var(--card-bg); border: 1px solid var(--gold2); border-radius: 12px; padding: 32px 28px; width: 100%; max-width: 380px; }
+    .field-label { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--gold); margin-bottom: 8px; }
+    .pin-input {
+      width: 100%; padding: 14px 16px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--gold2);
+      border-radius: 8px; color: var(--text);
       font-family: 'Montserrat', sans-serif;
-      font-size: 13px;
-      font-weight: 600;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      cursor: pointer;
-      margin-bottom: 12px;
-      display: block;
-    }
-    .btn:active { opacity: 0.7; }
-    #start-view { display: block; }
-    #scan-view { display: none; }
-    .video-wrap {
-      position: relative;
-      width: 100%;
-      border-radius: 12px;
-      overflow: hidden;
-      border: 1px solid rgba(200, 169, 110, 0.3);
-      margin-bottom: 16px;
-      background: #000;
-    }
-    #preview {
-      width: 100%;
-      display: block;
-      border-radius: 12px;
-    }
-    .scan-line {
-      position: absolute;
-      left: 10%; width: 80%;
-      height: 2px;
-      background: rgba(200, 169, 110, 0.7);
-      animation: scanMove 2s linear infinite;
-    }
-    @keyframes scanMove {
-      0% { top: 10%; }
-      100% { top: 90%; }
-    }
-    .scan-hint {
-      font-size: 12px;
-      color: rgba(240, 230, 211, 0.45);
-      letter-spacing: 1px;
-      margin-bottom: 16px;
-    }
-    #result-view { display: none; }
-    .card {
-      background: rgba(20, 10, 5, 0.78);
-      border: 1px solid rgba(200, 169, 110, 0.35);
-      border-radius: 12px;
-      padding: 40px 32px;
+      font-size: 20px; letter-spacing: 6px;
+      text-align: center; outline: none;
       margin-bottom: 20px;
     }
-    .icon { font-size: 52px; margin-bottom: 12px; }
-    .status {
-      font-size: 11px; font-weight: 600;
-      letter-spacing: 3px; text-transform: uppercase; margin-bottom: 20px;
+    .pin-input:focus { border-color: var(--gold); }
+    .btn {
+      width: 100%; padding: 14px;
+      background: rgba(200,169,110,0.15);
+      border: 1px solid var(--gold2);
+      border-radius: 8px; color: var(--gold);
+      font-family: 'Montserrat', sans-serif;
+      font-size: 12px; font-weight: 600;
+      letter-spacing: 2px; text-transform: uppercase;
+      cursor: pointer; transition: all 0.2s;
     }
-    .status.success { color: #c8a96e; }
-    .status.warning { color: #e0a030; }
-    .status.error { color: #8B2020; }
-    .divider { width: 40px; height: 1px; background: rgba(200, 169, 110, 0.4); margin: 0 auto 20px; }
-    .name-cn { font-family: 'Noto Serif SC', serif; font-size: 28px; font-weight: 700; color: #f0e6d3; letter-spacing: 4px; margin-bottom: 6px; }
-    .name-en { font-size: 13px; color: rgba(240, 230, 211, 0.7); letter-spacing: 1px; margin-bottom: 8px; }
-    .role { font-family: 'Noto Serif SC', serif; font-size: 12px; color: rgba(200, 169, 110, 0.9); letter-spacing: 2px; }
-    .detail { font-size: 11px; color: rgba(200, 169, 110, 0.6); letter-spacing: 1px; margin-top: 16px; }
-    .event-name { font-size: 10px; color: rgba(240, 230, 211, 0.3); letter-spacing: 2px; text-transform: uppercase; margin-top: 24px; }
-    #loading-view { display: none; padding: 60px 0; }
-    .spinner { width: 40px; height: 40px; border: 2px solid rgba(200, 169, 110, 0.2); border-top-color: #c8a96e; border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 16px; }
+    .btn:active { opacity: 0.7; }
+    .btn.gold { background: rgba(200,169,110,0.25); border-color: var(--gold); }
+    .btn.small { padding: 10px; font-size: 11px; margin-top: 10px; }
+    .error-msg { font-size: 11px; color: #c0392b; letter-spacing: 1px; text-align: center; margin-top: 12px; display: none; }
+
+    #scannerView { justify-content: flex-start; padding: 0; }
+    .scanner-header {
+      width: 100%; background: rgba(20,10,5,0.92);
+      border-bottom: 1px solid var(--gold2);
+      padding: 14px 20px;
+      display: flex; align-items: center; justify-content: space-between;
+      flex-shrink: 0;
+    }
+    .scanner-header-info { display: flex; flex-direction: column; }
+    .scanner-role { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--gold); }
+    .scanner-name { font-family: 'Noto Serif SC', serif; font-size: 16px; color: var(--text); letter-spacing: 2px; }
+    .logout-btn {
+      font-size: 10px; letter-spacing: 1px; text-transform: uppercase;
+      color: var(--muted); background: none; cursor: pointer;
+      font-family: 'Montserrat', sans-serif; padding: 6px 10px;
+      border: 1px solid rgba(200,169,110,0.2); border-radius: 6px;
+    }
+    .scanner-body { width: 100%; max-width: 420px; padding: 16px; flex: 1; display: flex; flex-direction: column; align-self: center; }
+
+    .session-selector { display: none; margin-bottom: 14px; }
+    .session-selector.show { display: block; }
+    .session-label { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--gold); margin-bottom: 8px; }
+    .session-btns { display: flex; gap: 8px; }
+    .session-btn {
+      flex: 1; padding: 10px;
+      background: rgba(200,169,110,0.08);
+      border: 1px solid var(--gold2);
+      border-radius: 8px; color: var(--muted);
+      font-family: 'Montserrat', sans-serif;
+      font-size: 11px; font-weight: 600;
+      letter-spacing: 1px; cursor: pointer; transition: all 0.2s;
+    }
+    .session-btn.active { background: rgba(200,169,110,0.25); border-color: var(--gold); color: var(--gold); }
+
+    #reader {
+      width: 100%; border-radius: 12px; overflow: hidden;
+      border: 1px solid var(--gold2); background: #000; margin-bottom: 12px;
+    }
+    #reader video { width: 100% !important; }
+    #reader img { display: none !important; }
+    .scan-hint { font-size: 11px; color: var(--muted); text-align: center; letter-spacing: 1px; margin-bottom: 14px; }
+
+    .result-card {
+      display: none; background: var(--card-bg);
+      border: 1px solid var(--gold2); border-radius: 12px;
+      padding: 28px 24px; text-align: center; margin-bottom: 14px;
+    }
+    .result-card.show { display: block; }
+    .result-icon { font-size: 48px; margin-bottom: 10px; }
+    .result-status { font-size: 10px; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 16px; }
+    .result-status.success { color: var(--gold); }
+    .result-status.warning { color: #e67e22; }
+    .result-status.error { color: #c0392b; }
+    .result-divider { width: 36px; height: 1px; background: var(--gold2); margin: 0 auto 16px; }
+    .result-name-cn { font-family: 'Noto Serif SC', serif; font-size: 26px; font-weight: 700; color: var(--text); letter-spacing: 4px; margin-bottom: 4px; }
+    .result-name-en { font-size: 12px; color: var(--muted); letter-spacing: 1px; margin-bottom: 6px; }
+    .result-role { font-family: 'Noto Serif SC', serif; font-size: 11px; color: var(--gold); letter-spacing: 2px; }
+    .result-detail { font-size: 10px; color: rgba(200,169,110,0.6); letter-spacing: 1px; margin-top: 14px; }
+    .result-event { font-size: 9px; color: rgba(240,230,211,0.25); letter-spacing: 2px; text-transform: uppercase; margin-top: 20px; }
+    .countdown { font-size: 10px; color: var(--muted); letter-spacing: 1px; margin-top: 10px; }
+
+    #statusView { justify-content: flex-start; padding: 0; }
+    .status-header {
+      width: 100%; background: rgba(20,10,5,0.92);
+      border-bottom: 1px solid var(--gold2);
+      padding: 14px 20px;
+      display: flex; align-items: center; justify-content: space-between;
+      flex-shrink: 0;
+    }
+    .status-body { width: 100%; max-width: 500px; padding: 16px; align-self: center; overflow-y: auto; }
+    .status-section { margin-bottom: 20px; }
+    .status-section-title { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--gold); margin-bottom: 10px; }
+    .stat-row { display: flex; gap: 10px; margin-bottom: 10px; flex-wrap: wrap; }
+    .stat-box { flex: 1; min-width: 80px; background: var(--card-bg); border: 1px solid var(--gold2); border-radius: 8px; padding: 14px; text-align: center; }
+    .stat-num { font-family: 'Noto Serif SC', serif; font-size: 28px; color: var(--text); }
+    .stat-label { font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); margin-top: 4px; }
+    .person-row { background: var(--card-bg); border: 1px solid var(--gold2); border-radius: 8px; padding: 12px 14px; margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between; }
+    .person-name { font-family: 'Noto Serif SC', serif; font-size: 14px; color: var(--text); letter-spacing: 2px; }
+    .person-status.checked { color: var(--gold); font-size: 9px; letter-spacing: 1px; }
+    .person-status.not-checked { color: rgba(240,230,211,0.3); font-size: 9px; letter-spacing: 1px; }
+
+    .nav-tabs {
+      width: 100%; display: none;
+      background: rgba(20,10,5,0.92);
+      border-top: 1px solid var(--gold2);
+      position: fixed; bottom: 0; left: 0; z-index: 100;
+    }
+    .nav-tabs.show { display: flex; }
+    .nav-tab {
+      flex: 1; padding: 12px 0;
+      background: none; border: none;
+      color: var(--muted); font-family: 'Montserrat', sans-serif;
+      font-size: 10px; font-weight: 600; letter-spacing: 1px;
+      text-transform: uppercase; cursor: pointer; transition: color 0.2s;
+    }
+    .nav-tab.active { color: var(--gold); }
+    .has-nav { padding-bottom: 56px !important; }
+
+    .loading { position: fixed; inset: 0; background: rgba(10,5,2,0.7); display: none; align-items: center; justify-content: center; z-index: 999; }
+    .loading.show { display: flex; }
+    .spinner { width: 36px; height: 36px; border: 2px solid var(--gold2); border-top-color: var(--gold); border-radius: 50%; animation: spin 0.7s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
-    .loading-text { font-size: 12px; color: rgba(200, 169, 110, 0.6); letter-spacing: 2px; }
-    canvas { display: none; }
   </style>
 </head>
 <body>
 <div class="bg"></div>
-<div class="container">
-  <div class="title">寻昔纪远</div>
-  <div class="subtitle">Crew Check-in</div>
+<div class="loading" id="loading"><div class="spinner"></div></div>
 
-  <div id="start-view">
-    <button class="btn" id="startBtn" onclick="startScanner()">开始扫描</button>
-  </div>
-
-  <div id="scan-view">
-    <div class="video-wrap">
-      <video id="preview" autoplay playsinline muted></video>
-      <div class="scan-line"></div>
-    </div>
-    <div class="scan-hint">将 QR Code 对准框内</div>
-    <button class="btn" onclick="stopScanner()">停止扫描</button>
-  </div>
-
-  <div id="loading-view">
-    <div class="spinner"></div>
-    <div class="loading-text">正在记录...</div>
-  </div>
-
-  <div id="result-view">
-    <div class="card">
-      <div class="icon" id="res-icon"></div>
-      <div class="status" id="res-status"></div>
-      <div class="divider" id="res-divider" style="display:none"></div>
-      <div class="name-cn" id="res-namecn"></div>
-      <div class="name-en" id="res-nameen"></div>
-      <div class="role" id="res-role"></div>
-      <div class="detail" id="res-detail"></div>
-      <div class="event-name">寻昔纪远 · Culture Camp 2026</div>
-    </div>
-    <button class="btn" onclick="resetScanner()">再次扫描</button>
+<!-- LOGIN -->
+<div class="view active" id="loginView">
+  <div class="login-title">寻昔纪远</div>
+  <div class="login-sub">Culture Camp 2026 · Check-in System</div>
+  <div class="card">
+    <div class="field-label">Enter PIN</div>
+    <input type="password" class="pin-input" id="pinInput" inputmode="numeric" maxlength="20" placeholder="••••••">
+    <button class="btn gold" onclick="doLogin()">Login</button>
+    <div class="error-msg" id="loginError">Invalid PIN. Please try again.</div>
   </div>
 </div>
 
-<canvas id="canvas"></canvas>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jsqr/1.4.0/jsQR.min.js"></script>
-<script>
-  const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzZstKPazsHqI4SkQWzZ8penmmWF3UTsX3po5hnZe93qQIBXhrcE1h4Lk1B_0hX2xbM/exec";
-  let stream = null;
-  let scanning = false;
-  let animFrame = null;
+<!-- SCANNER -->
+<div class="view" id="scannerView">
+  <div class="scanner-header">
+    <div class="scanner-header-info">
+      <div class="scanner-role" id="roleLabel"></div>
+      <div class="scanner-name" id="nameLabel"></div>
+    </div>
+    <button class="logout-btn" onclick="doLogout()">Logout</button>
+  </div>
+  <div class="scanner-body has-nav" id="scannerBody">
+    <div class="session-selector" id="sessionSelector">
+      <div class="session-label">Select Session</div>
+      <div class="session-btns">
+        <button class="session-btn active" id="btnMorning" onclick="selectSession('morning')">Morning</button>
+        <button class="session-btn" id="btnAfternoon" onclick="selectSession('afternoon')">Afternoon</button>
+      </div>
+    </div>
+    <div id="reader"></div>
+    <div class="scan-hint" id="scanHint">Initialising camera...</div>
+    <div class="result-card" id="resultCard">
+      <div class="result-icon" id="resultIcon"></div>
+      <div class="result-status" id="resultStatus"></div>
+      <div class="result-divider" id="resultDivider" style="display:none"></div>
+      <div class="result-name-cn" id="resultNameCN"></div>
+      <div class="result-name-en" id="resultNameEN"></div>
+      <div class="result-role" id="resultRole"></div>
+      <div class="result-detail" id="resultDetail"></div>
+      <div class="result-event">寻昔纪远 · Culture Camp 2026</div>
+      <div class="countdown" id="countdown"></div>
+    </div>
+    <button class="btn small" onclick="resumeScanner()" id="resumeBtn" style="display:none">Scan Next</button>
+  </div>
+</div>
 
-  function show(id) {
-    ['start-view','scan-view','loading-view','result-view'].forEach(v => {
-      document.getElementById(v).style.display = v === id ? 'block' : 'none';
-    });
+<!-- STATUS -->
+<div class="view" id="statusView">
+  <div class="status-header">
+    <div class="scanner-header-info">
+      <div class="scanner-role" id="roleLabel2"></div>
+      <div class="scanner-name" id="nameLabel2"></div>
+    </div>
+    <button class="logout-btn" onclick="doLogout()">Logout</button>
+  </div>
+  <div class="status-body has-nav" id="statusBody">
+    <div style="text-align:center;padding:40px 0;color:var(--muted);font-size:12px;letter-spacing:1px;">Loading...</div>
+  </div>
+</div>
+
+<!-- NAV -->
+<div class="nav-tabs" id="navTabs">
+  <button class="nav-tab active" id="tabScan" onclick="switchTab('scan')">Scan</button>
+  <button class="nav-tab" id="tabStatus" onclick="switchTab('status')">Status</button>
+</div>
+
+<script>
+const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwNniD-7Uwpus7k-ZhWTrGZpeh60qVilmWthAvlXtvkwks5WSXOQrTm1WcVaQCpsQ4A/exec";
+
+let currentRole = null, currentKey = null, currentRoleName = null, currentPin = null;
+let selectedSession = 'morning';
+let qrScanner = null, scannerRunning = false;
+let countdownTimer = null;
+let _statusDoc = null;
+
+// LOGIN
+document.getElementById('pinInput').addEventListener('keypress', e => { if (e.key === 'Enter') doLogin(); });
+
+async function doLogin() {
+  const pin = document.getElementById('pinInput').value.trim();
+  if (!pin) return;
+  showLoading(true);
+  try {
+    const res = await getAPI({ action: 'verify_pin', pin });
+    showLoading(false);
+    if (res.success) {
+      currentRole = res.role;
+      currentKey = res.key;
+      currentRoleName = res.name;
+      currentPin = pin;
+      enterApp();
+    } else {
+      document.getElementById('loginError').textContent = 'Invalid PIN. Please try again.';
+      document.getElementById('loginError').style.display = 'block';
+    }
+  } catch(e) {
+    showLoading(false);
+    document.getElementById('loginError').textContent = 'Connection error. Try again.';
+    document.getElementById('loginError').style.display = 'block';
+  }
+}
+
+function enterApp() {
+  const roleMap = { admin: 'Admin', registration: 'Registration', team: 'Team Leader' };
+  const roleText = roleMap[currentRole] || currentRole;
+  document.getElementById('roleLabel').textContent = roleText;
+  document.getElementById('nameLabel').textContent = currentRoleName;
+  document.getElementById('roleLabel2').textContent = roleText;
+  document.getElementById('nameLabel2').textContent = currentRoleName;
+
+  if (currentRole === 'team') {
+    document.getElementById('sessionSelector').classList.add('show');
   }
 
-  function startScanner() {
-  show('scan-view');
-  scanning = true;
-  navigator.mediaDevices.getUserMedia({
-    video: { facingMode: { ideal: 'environment' } }
-  }).then(function(s) {
-    stream = s;
-    const video = document.getElementById('preview');
-    video.srcObject = stream;
-    video.play();
-    video.addEventListener('loadedmetadata', tick);
-  }).catch(function(err) {
-    show('start-view');
-    alert('无法开启相机：' + err.message);
+  if (currentRole === 'admin' || currentRole === 'team' || currentRole === 'registration') {
+    document.getElementById('navTabs').classList.add('show');
+  }
+
+  showView('scannerView');
+  startScanner();
+}
+
+// SESSION
+function selectSession(s) {
+  selectedSession = s;
+  document.getElementById('btnMorning').classList.toggle('active', s === 'morning');
+  document.getElementById('btnAfternoon').classList.toggle('active', s === 'afternoon');
+}
+
+// SCANNER
+function startScanner() {
+  if (scannerRunning) return;
+  qrScanner = new Html5Qrcode('reader');
+  qrScanner.start(
+    { facingMode: 'environment' },
+    { fps: 10, qrbox: { width: 240, height: 240 } },
+    onScanSuccess,
+    () => {}
+  ).then(() => {
+    scannerRunning = true;
+    document.getElementById('scanHint').textContent = 'Point camera at QR Code';
+  }).catch(err => {
+    document.getElementById('scanHint').textContent = 'Camera error: ' + err;
   });
 }
+
+function stopScanner() {
+  if (qrScanner && scannerRunning) {
+    qrScanner.stop().then(() => { scannerRunning = false; }).catch(() => {});
   }
+}
 
-  function tick() {
-    const video = document.getElementById('preview');
-    const canvas = document.getElementById('canvas');
-    if (!scanning) return;
-    if (video.readyState === video.HAVE_ENOUGH_DATA) {
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-      const ctx = canvas.getContext('2d');
-      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-      const code = jsQR(imageData.data, imageData.width, imageData.height);
-      if (code) {
-        scanning = false;
-        stopStream();
-        processQR(code.data);
-        return;
-      }
-    }
-    animFrame = requestAnimationFrame(tick);
+function onScanSuccess(decodedText) {
+  if (qrScanner && scannerRunning) qrScanner.pause();
+  processQR(decodedText);
+}
+
+async function processQR(raw) {
+  let id = raw.trim();
+  try {
+    const u = new URL(raw);
+    const paramId = u.searchParams.get('id');
+    if (paramId) id = paramId.trim();
+  } catch(e) {}
+
+  showLoading(true);
+  try {
+    let params = { id };
+if (currentRole === 'admin') { params.action = 'checkin_crew'; params.pin = currentPin; }
+else if (currentRole === 'registration') { params.action = 'checkin_participant'; params.pin = currentPin; }
+else if (currentRole === 'team') { params.action = 'checkin_team'; params.pin = currentPin; params.session_type = selectedSession; }
+
+    const url = buildURL(params);
+    const res = await fetch(url);
+    const html = await res.text();
+    showLoading(false);
+    parseAndShowResult(html);
+  } catch(e) {
+    showLoading(false);
+    showResult('❌', 'error', 'Connection Error', '', '', '', '');
   }
+}
 
-  function stopStream() {
-    if (stream) {
-      stream.getTracks().forEach(t => t.stop());
-      stream = null;
-    }
+function buildURL(params) {
+  const u = new URL(WEB_APP_URL);
+  Object.entries(params).forEach(([k,v]) => u.searchParams.set(k, v));
+  return u.toString();
+}
+
+function parseAndShowResult(html) {
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(html, 'text/html');
+  const icon = doc.querySelector('.icon')?.textContent?.trim() || '❌';
+  const status = doc.querySelector('.status')?.textContent?.trim() || 'Error';
+  const nameCN = doc.querySelector('.name-cn')?.textContent?.trim() || '';
+  const nameEN = doc.querySelector('.name-en')?.textContent?.trim() || '';
+  const role = doc.querySelector('.role')?.textContent?.trim() || '';
+  const detail = doc.querySelector('.detail')?.textContent?.trim() || '';
+  const isSuccess = icon.includes('✅');
+  const isWarn = icon.includes('⚠️');
+  const cls = isSuccess ? 'success' : isWarn ? 'warning' : 'error';
+  showResult(icon, cls, status, nameCN, nameEN, role, detail);
+  if (isSuccess) startCountdown(4);
+}
+
+function showResult(icon, cls, status, nameCN, nameEN, role, detail) {
+  document.getElementById('resultIcon').textContent = icon;
+  document.getElementById('resultStatus').textContent = status;
+  document.getElementById('resultStatus').className = 'result-status ' + cls;
+  document.getElementById('resultNameCN').textContent = nameCN;
+  document.getElementById('resultNameEN').textContent = nameEN;
+  document.getElementById('resultRole').textContent = role;
+  document.getElementById('resultDetail').textContent = detail;
+  document.getElementById('resultDivider').style.display = nameCN ? 'block' : 'none';
+  document.getElementById('resultCard').classList.add('show');
+  document.getElementById('resumeBtn').style.display = 'block';
+}
+
+function startCountdown(sec) {
+  clearInterval(countdownTimer);
+  let n = sec;
+  document.getElementById('countdown').textContent = `Resuming in ${n}s...`;
+  countdownTimer = setInterval(() => {
+    n--;
+    if (n <= 0) { clearInterval(countdownTimer); document.getElementById('countdown').textContent = ''; resumeScanner(); }
+    else document.getElementById('countdown').textContent = `Resuming in ${n}s...`;
+  }, 1000);
+}
+
+function resumeScanner() {
+  clearInterval(countdownTimer);
+  document.getElementById('countdown').textContent = '';
+  document.getElementById('resultCard').classList.remove('show');
+  document.getElementById('resumeBtn').style.display = 'none';
+  if (qrScanner && scannerRunning) qrScanner.resume();
+  else startScanner();
+}
+
+// STATUS
+async function loadStatus() {
+  document.getElementById('statusBody').innerHTML = '<div style="text-align:center;padding:40px 0;color:var(--muted);font-size:12px;letter-spacing:1px;">Loading...</div>';
+  try {
+    let url;
+    if (currentRole === 'admin') url = buildURL({ action: 'dashboard', pin: currentPin });
+    else if (currentRole === 'registration') url = buildURL({ action: 'status_registration', pin: currentPin });
+    else if (currentRole === 'team') url = buildURL({ action: 'status_team', pin: currentPin });
+    const res = await fetch(url);
+    const html = await res.text();
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, 'text/html');
+    _statusDoc = doc;
+    if (currentRole === 'team') renderTeamStatus(doc);
+    else renderTableStatus(doc);
+  } catch(e) {
+    document.getElementById('statusBody').innerHTML = '<div style="text-align:center;padding:40px 0;color:#c0392b;font-size:12px;">Failed to load.</div>';
   }
+}
 
-  function stopScanner() {
-    scanning = false;
-    stopStream();
-    if (animFrame) cancelAnimationFrame(animFrame);
-    show('start-view');
+function renderTeamStatus(doc) {
+  const rows = doc.querySelectorAll('tbody tr');
+  const headers = Array.from(doc.querySelectorAll('thead th'));
+  if (!rows.length) { document.getElementById('statusBody').innerHTML = '<div style="text-align:center;padding:40px 0;color:var(--muted);font-size:12px;">No data.</div>'; return; }
+
+  const sessions = [];
+  headers.forEach((h, i) => { if (i >= 8) sessions.push({ name: h.textContent, col: i }); });
+  const today = getTodayKey();
+  const todaySessions = sessions.filter(s => isSessionToday(s.name, today));
+
+  let html = '<div class="status-section">';
+  if (todaySessions.length) {
+    html += '<div class="status-section-title">Today</div><div class="stat-row">';
+    todaySessions.forEach(s => {
+      let n = 0;
+      rows.forEach(r => { const c = r.querySelectorAll('td'); if (c[s.col]?.textContent?.trim()) n++; });
+      html += `<div class="stat-box"><div class="stat-num">${n}/${rows.length}</div><div class="stat-label">${s.name}</div></div>`;
+    });
+    html += '</div>';
   }
+  html += '<div class="status-section-title" style="margin-top:16px">Members</div>';
+  rows.forEach(r => {
+    const c = r.querySelectorAll('td');
+    if (!c.length) return;
+    const nameCN = c[1]?.textContent || '';
+    const nameEN = c[2]?.textContent || '';
+    const checked = todaySessions.some(s => c[s.col]?.textContent?.trim());
+    html += `<div class="person-row"><div><div class="person-name">${nameCN}</div><div style="font-size:10px;color:var(--muted);letter-spacing:1px;">${nameEN}</div></div><div class="person-status ${checked ? 'checked' : 'not-checked'}">${checked ? '✓ Checked In' : 'Not Yet'}</div></div>`;
+  });
+  html += '</div>';
+  html += '<button class="btn" style="margin-top:10px" onclick="exportCSV()">Export CSV</button>';
+  document.getElementById('statusBody').innerHTML = html;
+}
 
-  function processQR(url) {
-    show('loading-view');
-    let id = null;
-    try {
-      const urlObj = new URL(url);
-      id = urlObj.searchParams.get('id');
-    } catch(e) { id = url; }
+function renderTableStatus(doc) {
+  const rows = doc.querySelectorAll('tbody tr');
+  const headers = Array.from(doc.querySelectorAll('thead th'));
+  if (!rows.length) { document.getElementById('statusBody').innerHTML = '<div style="text-align:center;padding:40px 0;color:var(--muted);font-size:12px;">No data.</div>'; return; }
 
-    if (!id) {
-      showResult('❌', 'error', 'Invalid QR Code', '', '', '');
-      return;
-    }
+  const sessionCols = [];
+  headers.forEach((h, i) => { if (i >= 8) sessionCols.push({ name: h.textContent, col: i }); });
+  const today = getTodayKey();
+  const todayCols = sessionCols.filter(s => isSessionToday(s.name, today));
 
-    window.location.href = `${https://script.google.com/macros/s/AKfycbzZstKPazsHqI4SkQWzZ8penmmWF3UTsX3po5hnZe93qQIBXhrcE1h4Lk1B_0hX2xbM/exec}?id=${id}`;
+  let html = '<div class="status-section"><div class="status-section-title">Overview</div><div class="stat-row">';
+  html += `<div class="stat-box"><div class="stat-num">${rows.length}</div><div class="stat-label">Total</div></div>`;
+  todayCols.forEach(s => {
+    let n = 0;
+    rows.forEach(r => { const c = r.querySelectorAll('td'); if (c[s.col]?.textContent?.trim()) n++; });
+    html += `<div class="stat-box"><div class="stat-num">${n}</div><div class="stat-label">${s.name}</div></div>`;
+  });
+  html += '</div></div>';
+  html += '<button class="btn" style="margin-top:10px" onclick="exportCSV()">Export CSV</button>';
+  document.getElementById('statusBody').innerHTML = html;
+}
+
+function getTodayKey() {
+  const now = new Date();
+  return `${now.getDate()}/${now.getMonth() + 1}`;
+}
+
+function isSessionToday(sessionName, todayKey) {
+  return sessionName.includes(todayKey) || sessionName.toLowerCase().includes('testing');
+}
+
+function exportCSV() {
+  if (!_statusDoc) return;
+  const rows = _statusDoc.querySelectorAll('table tr');
+  let csv = '';
+  rows.forEach(r => {
+    const cells = Array.from(r.querySelectorAll('th,td')).map(c => `"${c.textContent.replace(/"/g,'""')}"`);
+    csv += cells.join(',') + '\n';
+  });
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'checkin_export.csv';
+  a.click();
+}
+
+// TABS
+function switchTab(tab) {
+  if (tab === 'scan') {
+    showView('scannerView');
+    if (!scannerRunning) startScanner();
+    document.getElementById('tabScan').classList.add('active');
+    document.getElementById('tabStatus').classList.remove('active');
+  } else {
+    showView('statusView');
+    stopScanner();
+    loadStatus();
+    document.getElementById('tabStatus').classList.add('active');
+    document.getElementById('tabScan').classList.remove('active');
   }
+}
 
-  function showResult(icon, statusClass, status, nameCN, nameEN, role, detail) {
-    show('result-view');
-    document.getElementById('res-icon').textContent = icon;
-    document.getElementById('res-status').textContent = status;
-    document.getElementById('res-status').className = `status ${statusClass}`;
-    document.getElementById('res-namecn').textContent = nameCN;
-    document.getElementById('res-nameen').textContent = nameEN;
-    document.getElementById('res-role').textContent = role;
-    document.getElementById('res-detail').textContent = detail;
-    document.getElementById('res-divider').style.display = nameCN ? 'block' : 'none';
-  }
+function showView(id) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
 
-  function resetScanner() {
-    scanning = false;
-    show('start-view');
-  }
+function doLogout() {
+  stopScanner();
+  clearInterval(countdownTimer);
+  currentRole = null; currentKey = null; currentRoleName = null; currentPin = null;
+  document.getElementById('pinInput').value = '';
+  document.getElementById('loginError').style.display = 'none';
+  document.getElementById('resultCard').classList.remove('show');
+  document.getElementById('resumeBtn').style.display = 'none';
+  document.getElementById('sessionSelector').classList.remove('show');
+  document.getElementById('navTabs').classList.remove('show');
+  showView('loginView');
+}
+
+// API
+async function getAPI(params) {
+  const u = new URL(WEB_APP_URL);
+  Object.entries(params).forEach(([k,v]) => u.searchParams.set(k, v));
+  const res = await fetch(u.toString());
+  return res.json();
+}
+
+function showLoading(show) {
+  document.getElementById('loading').classList.toggle('show', show);
+}
 </script>
 </body>
 </html>
