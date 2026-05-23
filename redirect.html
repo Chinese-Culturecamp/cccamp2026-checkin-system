@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Check-in...</title>
+  <style>
+    body { background: #1a0e08; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
+    .spinner { width: 36px; height: 36px; border: 2px solid rgba(200,169,110,0.2); border-top-color: #c8a96e; border-radius: 50%; animation: spin 0.7s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+<div class="spinner"></div>
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const target = params.get('to');
+  if (target) {
+    window.location.replace(decodeURIComponent(target));
+  }
+</script>
+</body>
+</html>
