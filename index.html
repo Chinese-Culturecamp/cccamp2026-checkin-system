@@ -340,6 +340,15 @@ async function processQR(raw) {
     if (paramId) id = paramId.trim();
   } catch(e) {}
 
+  let params = { id };
+  if (currentRole === 'admin') { params.action = 'checkin_crew'; params.pin = currentPin; }
+  else if (currentRole === 'registration') { params.action = 'checkin_participant'; params.pin = currentPin; }
+  else if (currentRole === 'team') { params.action = 'checkin_team'; params.pin = currentPin; params.session_type = selectedSession; }
+
+  const url = buildURL(params);
+  window.location.href = url;
+}
+
   showLoading(true);
   try {
     let params = { id };
