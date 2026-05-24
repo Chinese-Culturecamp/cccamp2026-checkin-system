@@ -12,62 +12,76 @@
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
   <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
   <style>
-    * { margin:0; padding:0; box-sizing:border-box; }
-    :root { --gold:#c8a96e; --gold2:rgba(200,169,110,0.4); --dark:#1a0e08; --card-bg:rgba(20,10,5,0.82); --text:#f0e6d3; --muted:rgba(240,230,211,0.5); }
-    body { min-height:100vh; background:var(--dark); font-family:'Montserrat',sans-serif; color:var(--text); position:relative; overflow-x:hidden; }
-    .bg { position:fixed; top:0; left:0; width:100%; height:100%; background-image:url('https://i.imgur.com/8I0PjjL.jpeg'); background-size:cover; background-position:center; opacity:0.35; z-index:0; }
-    .view { display:none; min-height:100vh; position:relative; z-index:1; }
-    .view.active { display:flex; flex-direction:column; align-items:center; justify-content:center; padding:24px 20px; }
-    .login-title { font-family:'Noto Serif SC',serif; font-size:26px; letter-spacing:5px; color:var(--text); margin-bottom:4px; text-align:center; }
-    .login-sub { font-size:10px; letter-spacing:3px; text-transform:uppercase; color:var(--gold); margin-bottom:36px; text-align:center; }
-    .card { background:var(--card-bg); border:1px solid var(--gold2); border-radius:12px; padding:32px 28px; width:100%; max-width:380px; }
-    .field-label { font-size:10px; letter-spacing:2px; text-transform:uppercase; color:var(--gold); margin-bottom:8px; }
-    .pin-input { width:100%; padding:14px 16px; background:rgba(255,255,255,0.05); border:1px solid var(--gold2); border-radius:8px; color:var(--text); font-family:'Montserrat',sans-serif; font-size:20px; letter-spacing:6px; text-align:center; outline:none; margin-bottom:20px; }
-    .pin-input:focus { border-color:var(--gold); }
-    .btn { width:100%; padding:14px; background:rgba(200,169,110,0.15); border:1px solid var(--gold2); border-radius:8px; color:var(--gold); font-family:'Montserrat',sans-serif; font-size:12px; font-weight:600; letter-spacing:2px; text-transform:uppercase; cursor:pointer; transition:all 0.2s; }
-    .btn:active { opacity:0.7; }
-    .btn.gold { background:rgba(200,169,110,0.25); border-color:var(--gold); }
-    .btn.small { padding:10px; font-size:11px; margin-top:10px; }
-    .error-msg { font-size:11px; color:#c0392b; letter-spacing:1px; text-align:center; margin-top:12px; display:none; }
-    #scannerView { justify-content:flex-start; padding:0; }
-    .scanner-header { width:100%; background:rgba(20,10,5,0.92); border-bottom:1px solid var(--gold2); padding:14px 20px; display:flex; align-items:center; justify-content:space-between; flex-shrink:0; }
-    .scanner-header-info { display:flex; flex-direction:column; }
-    .scanner-role { font-size:10px; letter-spacing:2px; text-transform:uppercase; color:var(--gold); }
-    .scanner-name { font-family:'Noto Serif SC',serif; font-size:16px; color:var(--text); letter-spacing:2px; }
-    .logout-btn { font-size:10px; letter-spacing:1px; text-transform:uppercase; color:var(--muted); background:none; cursor:pointer; font-family:'Montserrat',sans-serif; padding:6px 10px; border:1px solid rgba(200,169,110,0.2); border-radius:6px; }
-    .scanner-body { width:100%; max-width:420px; padding:16px; flex:1; display:flex; flex-direction:column; align-self:center; }
-    .session-selector { display:none; margin-bottom:14px; }
-    .session-selector.show { display:block; }
-    .session-label { font-size:10px; letter-spacing:2px; text-transform:uppercase; color:var(--gold); margin-bottom:8px; }
-    .session-btns { display:flex; gap:8px; }
-    .session-btn { flex:1; padding:10px; background:rgba(200,169,110,0.08); border:1px solid var(--gold2); border-radius:8px; color:var(--muted); font-family:'Montserrat',sans-serif; font-size:11px; font-weight:600; letter-spacing:1px; cursor:pointer; transition:all 0.2s; }
-    .session-btn.active { background:rgba(200,169,110,0.25); border-color:var(--gold); color:var(--gold); }
-    #reader { width:100%; border-radius:12px; overflow:hidden; border:1px solid var(--gold2); background:#000; margin-bottom:12px; }
-    #reader video { width:100% !important; }
-    #reader img { display:none !important; }
-    .scan-hint { font-size:11px; color:var(--muted); text-align:center; letter-spacing:1px; margin-bottom:14px; }
-    #statusView { justify-content:flex-start; padding:0; }
-    .status-header { width:100%; background:rgba(20,10,5,0.92); border-bottom:1px solid var(--gold2); padding:14px 20px; display:flex; align-items:center; justify-content:space-between; flex-shrink:0; }
-    .status-body { width:100%; max-width:500px; padding:16px; align-self:center; overflow-y:auto; }
-    .status-section { margin-bottom:20px; }
-    .status-section-title { font-size:10px; letter-spacing:2px; text-transform:uppercase; color:var(--gold); margin-bottom:10px; }
-    .stat-row { display:flex; gap:10px; margin-bottom:10px; flex-wrap:wrap; }
-    .stat-box { flex:1; min-width:80px; background:var(--card-bg); border:1px solid var(--gold2); border-radius:8px; padding:14px; text-align:center; }
-    .stat-num { font-family:'Noto Serif SC',serif; font-size:28px; color:var(--text); }
-    .stat-label { font-size:9px; letter-spacing:1px; text-transform:uppercase; color:var(--muted); margin-top:4px; }
-    .person-row { background:var(--card-bg); border:1px solid var(--gold2); border-radius:8px; padding:12px 14px; margin-bottom:6px; display:flex; align-items:center; justify-content:space-between; }
-    .person-name { font-family:'Noto Serif SC',serif; font-size:14px; color:var(--text); letter-spacing:2px; }
-    .person-status.checked { color:var(--gold); font-size:9px; letter-spacing:1px; }
-    .person-status.not-checked { color:rgba(240,230,211,0.3); font-size:9px; letter-spacing:1px; }
-    .nav-tabs { width:100%; display:none; background:rgba(20,10,5,0.92); border-top:1px solid var(--gold2); position:fixed; bottom:0; left:0; z-index:100; }
-    .nav-tabs.show { display:flex; }
-    .nav-tab { flex:1; padding:12px 0; background:none; border:none; color:var(--muted); font-family:'Montserrat',sans-serif; font-size:10px; font-weight:600; letter-spacing:1px; text-transform:uppercase; cursor:pointer; transition:color 0.2s; }
-    .nav-tab.active { color:var(--gold); }
-    .has-nav { padding-bottom:56px !important; }
-    .loading { position:fixed; inset:0; background:rgba(10,5,2,0.7); display:none; align-items:center; justify-content:center; z-index:999; }
-    .loading.show { display:flex; }
-    .spinner { width:36px; height:36px; border:2px solid var(--gold2); border-top-color:var(--gold); border-radius:50%; animation:spin 0.7s linear infinite; }
-    @keyframes spin { to { transform:rotate(360deg); } }
+    *{margin:0;padding:0;box-sizing:border-box;}
+    :root{--gold:#c8a96e;--gold2:rgba(200,169,110,0.4);--dark:#1a0e08;--card-bg:rgba(20,10,5,0.82);--text:#f0e6d3;--muted:rgba(240,230,211,0.5);}
+    body{min-height:100vh;background:var(--dark);font-family:'Montserrat',sans-serif;color:var(--text);position:relative;overflow-x:hidden;}
+    .bg{position:fixed;top:0;left:0;width:100%;height:100%;background-image:url('https://i.imgur.com/8I0PjjL.jpeg');background-size:cover;background-position:center;opacity:0.35;z-index:0;}
+    .view{display:none;min-height:100vh;position:relative;z-index:1;}
+    .view.active{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px 20px;}
+    .login-title{font-family:'Noto Serif SC',serif;font-size:26px;letter-spacing:5px;color:var(--text);margin-bottom:4px;text-align:center;}
+    .login-sub{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:36px;text-align:center;}
+    .card{background:var(--card-bg);border:1px solid var(--gold2);border-radius:12px;padding:32px 28px;width:100%;max-width:380px;}
+    .field-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:8px;}
+    .pin-input{width:100%;padding:14px 16px;background:rgba(255,255,255,0.05);border:1px solid var(--gold2);border-radius:8px;color:var(--text);font-family:'Montserrat',sans-serif;font-size:20px;letter-spacing:6px;text-align:center;outline:none;margin-bottom:20px;}
+    .pin-input:focus{border-color:var(--gold);}
+    .btn{width:100%;padding:14px;background:rgba(200,169,110,0.15);border:1px solid var(--gold2);border-radius:8px;color:var(--gold);font-family:'Montserrat',sans-serif;font-size:12px;font-weight:600;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all 0.2s;}
+    .btn:active{opacity:0.7;}
+    .btn.gold{background:rgba(200,169,110,0.25);border-color:var(--gold);}
+    .btn.small{padding:10px;font-size:11px;margin-top:10px;}
+    .error-msg{font-size:11px;color:#c0392b;letter-spacing:1px;text-align:center;margin-top:12px;display:none;}
+    #scannerView{justify-content:flex-start;padding:0;}
+    .scanner-header{width:100%;background:rgba(20,10,5,0.92);border-bottom:1px solid var(--gold2);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+    .scanner-header-info{display:flex;flex-direction:column;}
+    .scanner-role{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);}
+    .scanner-name{font-family:'Noto Serif SC',serif;font-size:16px;color:var(--text);letter-spacing:2px;}
+    .logout-btn{font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);background:none;cursor:pointer;font-family:'Montserrat',sans-serif;padding:6px 10px;border:1px solid rgba(200,169,110,0.2);border-radius:6px;}
+    .scanner-body{width:100%;max-width:420px;padding:16px;flex:1;display:flex;flex-direction:column;align-self:center;}
+    .session-selector{display:none;margin-bottom:14px;}
+    .session-selector.show{display:block;}
+    .session-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:8px;}
+    .session-btns{display:flex;gap:8px;}
+    .session-btn{flex:1;padding:10px;background:rgba(200,169,110,0.08);border:1px solid var(--gold2);border-radius:8px;color:var(--muted);font-family:'Montserrat',sans-serif;font-size:11px;font-weight:600;letter-spacing:1px;cursor:pointer;transition:all 0.2s;}
+    .session-btn.active{background:rgba(200,169,110,0.25);border-color:var(--gold);color:var(--gold);}
+    #reader{width:100%;border-radius:12px;overflow:hidden;border:1px solid var(--gold2);background:#000;margin-bottom:12px;}
+    #reader video{width:100% !important;}
+    #reader img{display:none !important;}
+    .scan-hint{font-size:11px;color:var(--muted);text-align:center;letter-spacing:1px;margin-bottom:14px;}
+    .result-card{display:none;background:var(--card-bg);border:1px solid var(--gold2);border-radius:12px;padding:28px 24px;text-align:center;margin-bottom:14px;}
+    .result-card.show{display:block;}
+    .result-icon{font-size:48px;margin-bottom:10px;}
+    .result-status{font-size:10px;font-weight:600;letter-spacing:3px;text-transform:uppercase;margin-bottom:16px;}
+    .result-status.success{color:var(--gold);}
+    .result-status.warning{color:#e67e22;}
+    .result-status.error{color:#c0392b;}
+    .result-divider{width:36px;height:1px;background:var(--gold2);margin:0 auto 16px;}
+    .result-name-cn{font-family:'Noto Serif SC',serif;font-size:26px;font-weight:700;color:var(--text);letter-spacing:4px;margin-bottom:4px;}
+    .result-name-en{font-size:12px;color:var(--muted);letter-spacing:1px;margin-bottom:6px;}
+    .result-role{font-family:'Noto Serif SC',serif;font-size:11px;color:var(--gold);letter-spacing:2px;}
+    .result-detail{font-size:10px;color:rgba(200,169,110,0.6);letter-spacing:1px;margin-top:14px;}
+    .result-event{font-size:9px;color:rgba(240,230,211,0.25);letter-spacing:2px;text-transform:uppercase;margin-top:20px;}
+    .countdown{font-size:10px;color:var(--muted);letter-spacing:1px;margin-top:10px;}
+    #statusView{justify-content:flex-start;padding:0;}
+    .status-header{width:100%;background:rgba(20,10,5,0.92);border-bottom:1px solid var(--gold2);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+    .status-body{width:100%;max-width:500px;padding:16px;align-self:center;overflow-y:auto;}
+    .status-section{margin-bottom:20px;}
+    .status-section-title{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:10px;}
+    .stat-row{display:flex;gap:10px;margin-bottom:10px;flex-wrap:wrap;}
+    .stat-box{flex:1;min-width:80px;background:var(--card-bg);border:1px solid var(--gold2);border-radius:8px;padding:14px;text-align:center;}
+    .stat-num{font-family:'Noto Serif SC',serif;font-size:28px;color:var(--text);}
+    .stat-label{font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-top:4px;}
+    .person-row{background:var(--card-bg);border:1px solid var(--gold2);border-radius:8px;padding:12px 14px;margin-bottom:6px;display:flex;align-items:center;justify-content:space-between;}
+    .person-name{font-family:'Noto Serif SC',serif;font-size:14px;color:var(--text);letter-spacing:2px;}
+    .person-status.checked{color:var(--gold);font-size:9px;letter-spacing:1px;}
+    .person-status.not-checked{color:rgba(240,230,211,0.3);font-size:9px;letter-spacing:1px;}
+    .nav-tabs{width:100%;display:none;background:rgba(20,10,5,0.92);border-top:1px solid var(--gold2);position:fixed;bottom:0;left:0;z-index:100;}
+    .nav-tabs.show{display:flex;}
+    .nav-tab{flex:1;padding:12px 0;background:none;border:none;color:var(--muted);font-family:'Montserrat',sans-serif;font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:color 0.2s;}
+    .nav-tab.active{color:var(--gold);}
+    .has-nav{padding-bottom:56px !important;}
+    .loading{position:fixed;inset:0;background:rgba(10,5,2,0.7);display:none;align-items:center;justify-content:center;z-index:999;}
+    .loading.show{display:flex;}
+    .spinner{width:36px;height:36px;border:2px solid var(--gold2);border-top-color:var(--gold);border-radius:50%;animation:spin 0.7s linear infinite;}
+    @keyframes spin{to{transform:rotate(360deg);}}
   </style>
 </head>
 <body>
@@ -103,6 +117,18 @@
     </div>
     <div id="reader"></div>
     <div class="scan-hint" id="scanHint">Initialising camera...</div>
+    <div class="result-card" id="resultCard">
+      <div class="result-icon" id="resultIcon"></div>
+      <div class="result-status" id="resultStatus"></div>
+      <div class="result-divider" id="resultDivider" style="display:none"></div>
+      <div class="result-name-cn" id="resultNameCN"></div>
+      <div class="result-name-en" id="resultNameEN"></div>
+      <div class="result-role" id="resultRole"></div>
+      <div class="result-detail" id="resultDetail"></div>
+      <div class="result-event">寻昔纪远 · Culture Camp 2026</div>
+      <div class="countdown" id="countdown"></div>
+    </div>
+    <button class="btn small" onclick="resumeScanner()" id="resumeBtn" style="display:none">Scan Next</button>
   </div>
 </div>
 
@@ -126,227 +152,263 @@
 
 <script>
 const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwNniD-7Uwpus7k-ZhWTrGZpeh60qVilmWthAvlXtvkwks5WSXOQrTm1WcVaQCpsQ4A/exec";
-const GITHUB_BASE = "https://chinese-culturecamp.github.io/cccamp2026-checkin-system";
 
-let currentRole = null, currentKey = null, currentRoleName = null, currentPin = null;
-let selectedSession = 'morning';
-let qrScanner = null, scannerRunning = false;
-let _statusDoc = null;
+let currentRole=null,currentKey=null,currentRoleName=null,currentPin=null;
+let selectedSession='morning';
+let qrScanner=null,scannerRunning=false;
+let countdownTimer=null,_statusDoc=null;
 
-// Auto-login from sessionStorage
-window.addEventListener('load', () => {
-  const pin = sessionStorage.getItem('ccc_pin');
-  const role = sessionStorage.getItem('ccc_role');
-  const key = sessionStorage.getItem('ccc_key');
-  const name = sessionStorage.getItem('ccc_name');
-  const session = sessionStorage.getItem('ccc_session');
-  if (pin && role) {
-    currentRole = role;
-    currentKey = key;
-    currentRoleName = name;
-    currentPin = pin;
-    if (session) selectedSession = session;
+window.addEventListener('load',()=>{
+  const pin=sessionStorage.getItem('ccc_pin');
+  const role=sessionStorage.getItem('ccc_role');
+  const key=sessionStorage.getItem('ccc_key');
+  const name=sessionStorage.getItem('ccc_name');
+  const sess=sessionStorage.getItem('ccc_session');
+  if(pin&&role){
+    currentRole=role;currentKey=key;currentRoleName=name;currentPin=pin;
+    if(sess){selectedSession=sess;}
     enterApp();
   }
 });
 
-document.getElementById('pinInput').addEventListener('keypress', e => { if (e.key === 'Enter') doLogin(); });
+document.getElementById('pinInput').addEventListener('keypress',e=>{if(e.key==='Enter')doLogin();});
 
-async function doLogin() {
-  const pin = document.getElementById('pinInput').value.trim();
-  if (!pin) return;
+async function doLogin(){
+  const pin=document.getElementById('pinInput').value.trim();
+  if(!pin)return;
   showLoading(true);
-  try {
-    const res = await getAPI({ action: 'verify_pin', pin });
+  try{
+    const res=await getAPI({action:'verify_pin',pin});
     showLoading(false);
-    if (res.success) {
-      currentRole = res.role; currentKey = res.key; currentRoleName = res.name; currentPin = pin;
-      sessionStorage.setItem('ccc_pin', pin);
-      sessionStorage.setItem('ccc_role', res.role);
-      sessionStorage.setItem('ccc_key', res.key);
-      sessionStorage.setItem('ccc_name', res.name);
+    if(res.success){
+      currentRole=res.role;currentKey=res.key;currentRoleName=res.name;currentPin=pin;
+      sessionStorage.setItem('ccc_pin',pin);
+      sessionStorage.setItem('ccc_role',res.role);
+      sessionStorage.setItem('ccc_key',res.key);
+      sessionStorage.setItem('ccc_name',res.name);
       enterApp();
-    } else {
-      document.getElementById('loginError').textContent = 'Invalid PIN. Please try again.';
-      document.getElementById('loginError').style.display = 'block';
+    }else{
+      document.getElementById('loginError').textContent='Invalid PIN. Please try again.';
+      document.getElementById('loginError').style.display='block';
     }
-  } catch(e) {
+  }catch(e){
     showLoading(false);
-    document.getElementById('loginError').textContent = 'Connection error. Try again.';
-    document.getElementById('loginError').style.display = 'block';
+    document.getElementById('loginError').textContent='Connection error. Try again.';
+    document.getElementById('loginError').style.display='block';
   }
 }
 
-function enterApp() {
-  const roleMap = { admin:'Admin', registration:'Registration', team:'Team Leader' };
-  const roleText = roleMap[currentRole] || currentRole;
-  document.getElementById('roleLabel').textContent = roleText;
-  document.getElementById('nameLabel').textContent = currentRoleName;
-  document.getElementById('roleLabel2').textContent = roleText;
-  document.getElementById('nameLabel2').textContent = currentRoleName;
-  if (currentRole === 'team') document.getElementById('sessionSelector').classList.add('show');
+function enterApp(){
+  const roleMap={admin:'Admin',registration:'Registration',team:'Team Leader'};
+  const roleText=roleMap[currentRole]||currentRole;
+  document.getElementById('roleLabel').textContent=roleText;
+  document.getElementById('nameLabel').textContent=currentRoleName;
+  document.getElementById('roleLabel2').textContent=roleText;
+  document.getElementById('nameLabel2').textContent=currentRoleName;
+  if(currentRole==='team')document.getElementById('sessionSelector').classList.add('show');
+  if(selectedSession==='afternoon'){
+    document.getElementById('btnMorning').classList.remove('active');
+    document.getElementById('btnAfternoon').classList.add('active');
+  }
   document.getElementById('navTabs').classList.add('show');
   showView('scannerView');
   startScanner();
 }
 
-function selectSession(s) {
-  selectedSession = s;
-  sessionStorage.setItem('ccc_session', s);
-  document.getElementById('btnMorning').classList.toggle('active', s === 'morning');
-  document.getElementById('btnAfternoon').classList.toggle('active', s === 'afternoon');
+function selectSession(s){
+  selectedSession=s;
+  sessionStorage.setItem('ccc_session',s);
+  document.getElementById('btnMorning').classList.toggle('active',s==='morning');
+  document.getElementById('btnAfternoon').classList.toggle('active',s==='afternoon');
 }
 
-function startScanner() {
-  if (scannerRunning) return;
-  qrScanner = new Html5Qrcode('reader');
+function startScanner(){
+  if(scannerRunning)return;
+  qrScanner=new Html5Qrcode('reader');
   qrScanner.start(
-    { facingMode: 'environment' },
-    { fps: 10, qrbox: { width: 240, height: 240 } },
-    onScanSuccess, () => {}
-  ).then(() => {
-    scannerRunning = true;
-    document.getElementById('scanHint').textContent = 'Point camera at QR Code';
-  }).catch(err => {
-    document.getElementById('scanHint').textContent = 'Camera error: ' + err;
+    {facingMode:'environment'},
+    {fps:10,qrbox:{width:240,height:240}},
+    onScanSuccess,()=>{}
+  ).then(()=>{
+    scannerRunning=true;
+    document.getElementById('scanHint').textContent='Point camera at QR Code';
+  }).catch(err=>{
+    document.getElementById('scanHint').textContent='Camera error: '+err;
   });
 }
 
-function stopScanner() {
-  if (qrScanner && scannerRunning) {
-    qrScanner.stop().then(() => { scannerRunning = false; }).catch(() => {});
+function stopScanner(){
+  if(qrScanner&&scannerRunning){
+    qrScanner.stop().then(()=>{scannerRunning=false;}).catch(()=>{});
   }
 }
 
-function onScanSuccess(decodedText) {
-  if (qrScanner && scannerRunning) qrScanner.pause();
+function onScanSuccess(decodedText){
+  if(qrScanner&&scannerRunning)qrScanner.pause();
   processQR(decodedText);
 }
 
-function processQR(raw) {
-  let id = raw.trim();
-  try {
-    const u = new URL(raw);
-    const paramId = u.searchParams.get('id');
-    if (paramId) id = paramId.trim();
-  } catch(e) {}
+async function processQR(raw){
+  let id=raw.trim();
+  try{const u=new URL(raw);const p=u.searchParams.get('id');if(p)id=p.trim();}catch(e){}
 
-  let params = { id };
-  if (currentRole === 'admin') { params.action = 'checkin_crew'; params.pin = currentPin; }
-  else if (currentRole === 'registration') { params.action = 'checkin_participant'; params.pin = currentPin; }
-  else if (currentRole === 'team') { params.action = 'checkin_team'; params.pin = currentPin; params.session_type = selectedSession; }
+  let params={id};
+  if(currentRole==='admin'){params.action='checkin_crew';params.pin=currentPin;}
+  else if(currentRole==='registration'){params.action='checkin_participant';params.pin=currentPin;}
+  else if(currentRole==='team'){params.action='checkin_team';params.pin=currentPin;params.session_type=selectedSession;}
 
-  const appsScriptUrl = buildURL(params);
-  const redirectUrl = `${GITHUB_BASE}/redirect.html?to=${encodeURIComponent(appsScriptUrl)}`;
-  window.location.href = redirectUrl;
+  showLoading(true);
+  try{
+    const res=await getAPI(params);
+    showLoading(false);
+    showResult(res);
+  }catch(e){
+    showLoading(false);
+    showResult({success:false,icon:'❌',status:'Connection Error',nameCN:'',nameEN:'',role:'',detail:''});
+  }
 }
 
-function buildURL(params) {
-  const u = new URL(WEB_APP_URL);
-  Object.entries(params).forEach(([k,v]) => u.searchParams.set(k, v));
+function showResult(res){
+  const icon=res.icon||'❌';
+  const status=res.status||'Error';
+  const nameCN=res.nameCN||'';
+  const nameEN=res.nameEN||'';
+  const role=res.role||'';
+  const detail=res.detail||'';
+  const isSuccess=icon.includes('✅');
+  const isWarn=icon.includes('⚠️');
+  const cls=isSuccess?'success':isWarn?'warning':'error';
+
+  document.getElementById('resultIcon').textContent=icon;
+  document.getElementById('resultStatus').textContent=status;
+  document.getElementById('resultStatus').className='result-status '+cls;
+  document.getElementById('resultNameCN').textContent=nameCN;
+  document.getElementById('resultNameEN').textContent=nameEN;
+  document.getElementById('resultRole').textContent=role;
+  document.getElementById('resultDetail').textContent=detail;
+  document.getElementById('resultDivider').style.display=nameCN?'block':'none';
+  document.getElementById('resultCard').classList.add('show');
+  document.getElementById('resumeBtn').style.display='block';
+
+  if(isSuccess)startCountdown(4);
+}
+
+function startCountdown(sec){
+  clearInterval(countdownTimer);
+  let n=sec;
+  document.getElementById('countdown').textContent=`Resuming in ${n}s...`;
+  countdownTimer=setInterval(()=>{
+    n--;
+    if(n<=0){clearInterval(countdownTimer);document.getElementById('countdown').textContent='';resumeScanner();}
+    else document.getElementById('countdown').textContent=`Resuming in ${n}s...`;
+  },1000);
+}
+
+function resumeScanner(){
+  clearInterval(countdownTimer);
+  document.getElementById('countdown').textContent='';
+  document.getElementById('resultCard').classList.remove('show');
+  document.getElementById('resumeBtn').style.display='none';
+  if(qrScanner&&scannerRunning)qrScanner.resume();
+  else startScanner();
+}
+
+function buildURL(params){
+  const u=new URL(WEB_APP_URL);
+  Object.entries(params).forEach(([k,v])=>u.searchParams.set(k,v));
   return u.toString();
 }
 
-async function loadStatus() {
-  document.getElementById('statusBody').innerHTML = '<div style="text-align:center;padding:40px 0;color:var(--muted);font-size:12px;letter-spacing:1px;">Loading...</div>';
-  try {
-    let url;
-    if (currentRole === 'admin') url = buildURL({ action: 'dashboard', pin: currentPin });
-    else if (currentRole === 'registration') url = buildURL({ action: 'status_registration', pin: currentPin });
-    else if (currentRole === 'team') url = buildURL({ action: 'status_team', pin: currentPin });
-    const res = await fetch(url);
-    const html = await res.text();
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(html, 'text/html');
-    _statusDoc = doc;
-    if (currentRole === 'team') renderTeamStatus(doc);
-    else renderTableStatus(doc);
-  } catch(e) {
-    document.getElementById('statusBody').innerHTML = '<div style="text-align:center;padding:40px 0;color:#c0392b;font-size:12px;">Failed to load.</div>';
+async function loadStatus(){
+  document.getElementById('statusBody').innerHTML='<div style="text-align:center;padding:40px 0;color:var(--muted);font-size:12px;letter-spacing:1px;">Loading...</div>';
+  try{
+    let params={};
+    if(currentRole==='admin')params={action:'dashboard',pin:currentPin};
+    else if(currentRole==='registration')params={action:'status_registration',pin:currentPin};
+    else if(currentRole==='team')params={action:'status_team',pin:currentPin};
+    const res=await getAPI(params);
+    if(res.success){
+      if(currentRole==='team')renderTeamStatus(res.data);
+      else renderTableStatus(res.data);
+    }else{
+      document.getElementById('statusBody').innerHTML='<div style="text-align:center;padding:40px 0;color:#c0392b;font-size:12px;">Failed to load.</div>';
+    }
+  }catch(e){
+    document.getElementById('statusBody').innerHTML='<div style="text-align:center;padding:40px 0;color:#c0392b;font-size:12px;">Failed to load.</div>';
   }
 }
 
-function renderTeamStatus(doc) {
-  const rows = doc.querySelectorAll('tbody tr');
-  const headers = Array.from(doc.querySelectorAll('thead th'));
-  if (!rows.length) { document.getElementById('statusBody').innerHTML = '<div style="text-align:center;padding:40px 0;color:var(--muted);font-size:12px;">No data.</div>'; return; }
-  const sessions = [];
-  headers.forEach((h, i) => { if (i >= 8) sessions.push({ name: h.textContent, col: i }); });
-  const today = getTodayKey();
-  const todaySessions = sessions.filter(s => isSessionToday(s.name, today));
-  let html = '<div class="status-section">';
-  if (todaySessions.length) {
-    html += '<div class="status-section-title">Today</div><div class="stat-row">';
-    todaySessions.forEach(s => {
-      let n = 0;
-      rows.forEach(r => { const c = r.querySelectorAll('td'); if (c[s.col]?.textContent?.trim()) n++; });
-      html += `<div class="stat-box"><div class="stat-num">${n}/${rows.length}</div><div class="stat-label">${s.name}</div></div>`;
+function renderTeamStatus(data){
+  if(!data||!data.rows||!data.rows.length){document.getElementById('statusBody').innerHTML='<div style="text-align:center;padding:40px 0;color:var(--muted);font-size:12px;">No data.</div>';return;}
+  const headers=data.headers;
+  const rows=data.rows;
+  const sessionCols=[];
+  headers.forEach((h,i)=>{if(i>=8)sessionCols.push({name:h,col:i});});
+  const today=getTodayKey();
+  const todaySessions=sessionCols.filter(s=>isSessionToday(s.name,today));
+  let html='<div class="status-section">';
+  if(todaySessions.length){
+    html+='<div class="status-section-title">Today</div><div class="stat-row">';
+    todaySessions.forEach(s=>{
+      const n=rows.filter(r=>r[s.col]&&String(r[s.col]).trim()).length;
+      html+=`<div class="stat-box"><div class="stat-num">${n}/${rows.length}</div><div class="stat-label">${s.name}</div></div>`;
     });
-    html += '</div>';
+    html+='</div>';
   }
-  html += '<div class="status-section-title" style="margin-top:16px">Members</div>';
-  rows.forEach(r => {
-    const c = r.querySelectorAll('td');
-    if (!c.length) return;
-    const nameCN = c[1]?.textContent || '';
-    const nameEN = c[2]?.textContent || '';
-    const checked = todaySessions.some(s => c[s.col]?.textContent?.trim());
-    html += `<div class="person-row"><div><div class="person-name">${nameCN}</div><div style="font-size:10px;color:var(--muted);letter-spacing:1px;">${nameEN}</div></div><div class="person-status ${checked?'checked':'not-checked'}">${checked?'✓ Checked In':'Not Yet'}</div></div>`;
+  html+='<div class="status-section-title" style="margin-top:16px">Members</div>';
+  rows.forEach(r=>{
+    const nameCN=r[1]||'';const nameEN=r[2]||'';
+    const checked=todaySessions.some(s=>r[s.col]&&String(r[s.col]).trim());
+    html+=`<div class="person-row"><div><div class="person-name">${nameCN}</div><div style="font-size:10px;color:var(--muted);letter-spacing:1px;">${nameEN}</div></div><div class="person-status ${checked?'checked':'not-checked'}">${checked?'✓ Checked In':'Not Yet'}</div></div>`;
   });
-  html += '</div><button class="btn" style="margin-top:10px" onclick="exportCSV()">Export CSV</button>';
-  document.getElementById('statusBody').innerHTML = html;
+  html+='</div><button class="btn" style="margin-top:10px" onclick="exportData()">Export CSV</button>';
+  document.getElementById('statusBody').innerHTML=html;
+  window._exportData=data;
 }
 
-function renderTableStatus(doc) {
-  const rows = doc.querySelectorAll('tbody tr');
-  const headers = Array.from(doc.querySelectorAll('thead th'));
-  if (!rows.length) { document.getElementById('statusBody').innerHTML = '<div style="text-align:center;padding:40px 0;color:var(--muted);font-size:12px;">No data.</div>'; return; }
-  const sessionCols = [];
-  headers.forEach((h, i) => { if (i >= 8) sessionCols.push({ name: h.textContent, col: i }); });
-  const today = getTodayKey();
-  const todayCols = sessionCols.filter(s => isSessionToday(s.name, today));
-  let html = '<div class="status-section"><div class="status-section-title">Overview</div><div class="stat-row">';
-  html += `<div class="stat-box"><div class="stat-num">${rows.length}</div><div class="stat-label">Total</div></div>`;
-  todayCols.forEach(s => {
-    let n = 0;
-    rows.forEach(r => { const c = r.querySelectorAll('td'); if (c[s.col]?.textContent?.trim()) n++; });
-    html += `<div class="stat-box"><div class="stat-num">${n}</div><div class="stat-label">${s.name}</div></div>`;
+function renderTableStatus(data){
+  if(!data||!data.rows||!data.rows.length){document.getElementById('statusBody').innerHTML='<div style="text-align:center;padding:40px 0;color:var(--muted);font-size:12px;">No data.</div>';return;}
+  const headers=data.headers;
+  const rows=data.rows;
+  const sessionCols=[];
+  headers.forEach((h,i)=>{if(i>=8)sessionCols.push({name:h,col:i});});
+  const today=getTodayKey();
+  const todayCols=sessionCols.filter(s=>isSessionToday(s.name,today));
+  let html='<div class="status-section"><div class="status-section-title">Overview</div><div class="stat-row">';
+  html+=`<div class="stat-box"><div class="stat-num">${rows.length}</div><div class="stat-label">Total</div></div>`;
+  todayCols.forEach(s=>{
+    const n=rows.filter(r=>r[s.col]&&String(r[s.col]).trim()).length;
+    html+=`<div class="stat-box"><div class="stat-num">${n}</div><div class="stat-label">${s.name}</div></div>`;
   });
-  html += '</div></div><button class="btn" style="margin-top:10px" onclick="exportCSV()">Export CSV</button>';
-  document.getElementById('statusBody').innerHTML = html;
+  html+='</div></div><button class="btn" style="margin-top:10px" onclick="exportData()">Export CSV</button>';
+  document.getElementById('statusBody').innerHTML=html;
+  window._exportData=data;
 }
 
-function getTodayKey() {
-  const now = new Date();
-  return `${now.getDate()}/${now.getMonth()+1}`;
-}
-
-function isSessionToday(sessionName, todayKey) {
-  return sessionName.includes(todayKey) || sessionName.toLowerCase().includes('testing');
-}
-
-function exportCSV() {
-  if (!_statusDoc) return;
-  const rows = _statusDoc.querySelectorAll('table tr');
-  let csv = '';
-  rows.forEach(r => {
-    const cells = Array.from(r.querySelectorAll('th,td')).map(c => `"${c.textContent.replace(/"/g,'""')}"`);
-    csv += cells.join(',') + '\n';
+function exportData(){
+  const data=window._exportData;
+  if(!data)return;
+  let csv=data.headers.map(h=>`"${h}"`).join(',')+'\n';
+  data.rows.forEach(r=>{
+    csv+=r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')+'\n';
   });
-  const blob = new Blob([csv], { type: 'text/csv' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = 'checkin_export.csv';
+  const blob=new Blob([csv],{type:'text/csv'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='checkin_export.csv';
   a.click();
 }
 
-function switchTab(tab) {
-  if (tab === 'scan') {
+function getTodayKey(){const now=new Date();return `${now.getDate()}/${now.getMonth()+1}`;}
+function isSessionToday(n,t){return n.includes(t)||n.toLowerCase().includes('testing');}
+
+function switchTab(tab){
+  if(tab==='scan'){
     showView('scannerView');
-    if (!scannerRunning) startScanner();
+    if(!scannerRunning)startScanner();
     document.getElementById('tabScan').classList.add('active');
     document.getElementById('tabStatus').classList.remove('active');
-  } else {
+  }else{
     showView('statusView');
     stopScanner();
     loadStatus();
@@ -355,32 +417,33 @@ function switchTab(tab) {
   }
 }
 
-function showView(id) {
-  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+function showView(id){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   document.getElementById(id).classList.add('active');
 }
 
-function doLogout() {
+function doLogout(){
   stopScanner();
+  clearInterval(countdownTimer);
   sessionStorage.clear();
-  currentRole = null; currentKey = null; currentRoleName = null; currentPin = null;
-  document.getElementById('pinInput').value = '';
-  document.getElementById('loginError').style.display = 'none';
+  currentRole=null;currentKey=null;currentRoleName=null;currentPin=null;
+  document.getElementById('pinInput').value='';
+  document.getElementById('loginError').style.display='none';
+  document.getElementById('resultCard').classList.remove('show');
+  document.getElementById('resumeBtn').style.display='none';
   document.getElementById('sessionSelector').classList.remove('show');
   document.getElementById('navTabs').classList.remove('show');
   showView('loginView');
 }
 
-async function getAPI(params) {
-  const u = new URL(WEB_APP_URL);
-  Object.entries(params).forEach(([k,v]) => u.searchParams.set(k, v));
-  const res = await fetch(u.toString());
+async function getAPI(params){
+  const u=new URL(WEB_APP_URL);
+  Object.entries(params).forEach(([k,v])=>u.searchParams.set(k,v));
+  const res=await fetch(u.toString());
   return res.json();
 }
 
-function showLoading(show) {
-  document.getElementById('loading').classList.toggle('show', show);
-}
+function showLoading(show){document.getElementById('loading').classList.toggle('show',show);}
 </script>
 </body>
 </html>
