@@ -126,12 +126,29 @@
 
 <script>
 const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwNniD-7Uwpus7k-ZhWTrGZpeh60qVilmWthAvlXtvkwks5WSXOQrTm1WcVaQCpsQ4A/exec";
-const GITHUB_BASE = "https://chinese-culturecamp.github.io/cccamp2026-checkin-system/";
+const GITHUB_BASE = "https://chinese-culturecamp.github.io/cccamp2026-checkin-system";
 
 let currentRole = null, currentKey = null, currentRoleName = null, currentPin = null;
 let selectedSession = 'morning';
 let qrScanner = null, scannerRunning = false;
 let _statusDoc = null;
+
+// Auto-login from sessionStorage
+window.addEventListener('load', () => {
+  const pin = sessionStorage.getItem('ccc_pin');
+  const role = sessionStorage.getItem('ccc_role');
+  const key = sessionStorage.getItem('ccc_key');
+  const name = sessionStorage.getItem('ccc_name');
+  const session = sessionStorage.getItem('ccc_session');
+  if (pin && role) {
+    currentRole = role;
+    currentKey = key;
+    currentRoleName = name;
+    currentPin = pin;
+    if (session) selectedSession = session;
+    enterApp();
+  }
+});
 
 document.getElementById('pinInput').addEventListener('keypress', e => { if (e.key === 'Enter') doLogin(); });
 
@@ -144,6 +161,10 @@ async function doLogin() {
     showLoading(false);
     if (res.success) {
       currentRole = res.role; currentKey = res.key; currentRoleName = res.name; currentPin = pin;
+      sessionStorage.setItem('ccc_pin', pin);
+      sessionStorage.setItem('ccc_role', res.role);
+      sessionStorage.setItem('ccc_key', res.key);
+      sessionStorage.setItem('ccc_name', res.name);
       enterApp();
     } else {
       document.getElementById('loginError').textContent = 'Invalid PIN. Please try again.';
@@ -171,6 +192,7 @@ function enterApp() {
 
 function selectSession(s) {
   selectedSession = s;
+  sessionStorage.setItem('ccc_session', s);
   document.getElementById('btnMorning').classList.toggle('active', s === 'morning');
   document.getElementById('btnAfternoon').classList.toggle('active', s === 'afternoon');
 }
@@ -340,6 +362,7 @@ function showView(id) {
 
 function doLogout() {
   stopScanner();
+  sessionStorage.clear();
   currentRole = null; currentKey = null; currentRoleName = null; currentPin = null;
   document.getElementById('pinInput').value = '';
   document.getElementById('loginError').style.display = 'none';
