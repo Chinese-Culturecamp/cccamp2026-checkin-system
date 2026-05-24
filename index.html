@@ -30,10 +30,10 @@
     .btn.small{padding:10px;font-size:11px;margin-top:10px;}
     .error-msg{font-size:11px;color:#c0392b;letter-spacing:1px;text-align:center;margin-top:12px;display:none;}
     #scannerView{justify-content:flex-start;padding:0;}
-    .scanner-header{width:100%;background:rgba(20,10,5,0.92);border-bottom:1px solid var(--gold2);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
-    .scanner-header-info{display:flex;flex-direction:column;}
-    .scanner-role{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);}
-    .scanner-name{font-family:'Noto Serif SC',serif;font-size:16px;color:var(--text);letter-spacing:2px;}
+    .top-bar{width:100%;background:rgba(20,10,5,0.92);border-bottom:1px solid var(--gold2);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+    .top-bar-info{display:flex;flex-direction:column;}
+    .top-role{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);}
+    .top-name{font-family:'Noto Serif SC',serif;font-size:16px;color:var(--text);letter-spacing:2px;}
     .logout-btn{font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);background:none;cursor:pointer;font-family:'Montserrat',sans-serif;padding:6px 10px;border:1px solid rgba(200,169,110,0.2);border-radius:6px;}
     .scanner-body{width:100%;max-width:420px;padding:16px;flex:1;display:flex;flex-direction:column;align-self:center;}
     .session-selector{display:none;margin-bottom:14px;}
@@ -61,26 +61,25 @@
     .result-event{font-size:9px;color:rgba(240,230,211,0.25);letter-spacing:2px;text-transform:uppercase;margin-top:20px;}
     .countdown{font-size:10px;color:var(--muted);letter-spacing:1px;margin-top:10px;}
     #statusView{justify-content:flex-start;padding:0;}
-    .status-header{width:100%;background:rgba(20,10,5,0.92);border-bottom:1px solid var(--gold2);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
-    .status-body{width:100%;max-width:560px;padding:16px;align-self:center;overflow-y:auto;padding-bottom:70px;}
+    .status-body{width:100%;max-width:560px;padding:16px 16px 80px;align-self:center;overflow-y:auto;}
     .sec-title{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:10px;margin-top:20px;}
     .sec-title:first-child{margin-top:0;}
     .stat-row{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;}
     .stat-box{flex:1;min-width:70px;background:var(--card-bg);border:1px solid var(--gold2);border-radius:8px;padding:12px;text-align:center;}
     .stat-num{font-family:'Noto Serif SC',serif;font-size:24px;color:var(--text);}
     .stat-label{font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-top:4px;}
-    .team-card{background:var(--card-bg);border:1px solid var(--gold2);border-radius:8px;padding:14px;margin-bottom:8px;}
-    .team-name{font-family:'Noto Serif SC',serif;font-size:14px;color:var(--text);letter-spacing:2px;margin-bottom:8px;}
-    .team-sessions{display:flex;gap:6px;flex-wrap:wrap;}
-    .session-pill{font-size:9px;letter-spacing:1px;padding:4px 8px;border-radius:20px;border:1px solid var(--gold2);color:var(--muted);}
-    .session-pill.done{border-color:var(--gold);color:var(--gold);}
+    .team-block{background:var(--card-bg);border:1px solid var(--gold2);border-radius:8px;padding:14px;margin-bottom:10px;}
+    .team-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+    .team-name-label{font-family:'Noto Serif SC',serif;font-size:13px;color:var(--text);letter-spacing:2px;}
+    .team-count{font-size:10px;color:var(--gold);letter-spacing:1px;}
+    .not-checked-list{margin-top:8px;border-top:1px solid rgba(200,169,110,0.15);padding-top:8px;}
+    .not-checked-item{padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.04);display:flex;gap:10px;align-items:flex-start;}
+    .not-checked-item:last-child{border-bottom:none;}
+    .nci-id{font-size:9px;color:rgba(200,169,110,0.5);letter-spacing:1px;min-width:56px;padding-top:2px;}
+    .nci-info{flex:1;}
+    .nci-name{font-family:'Noto Serif SC',serif;font-size:13px;color:var(--text);letter-spacing:2px;}
+    .nci-detail{font-size:10px;color:var(--muted);letter-spacing:1px;margin-top:2px;}
     .person-row{background:var(--card-bg);border:1px solid var(--gold2);border-radius:8px;padding:10px 14px;margin-bottom:6px;}
-    .person-main{display:flex;align-items:center;justify-content:space-between;}
-    .person-name{font-family:'Noto Serif SC',serif;font-size:13px;color:var(--text);letter-spacing:2px;}
-    .person-badge{font-size:9px;letter-spacing:1px;}
-    .person-badge.checked{color:var(--gold);}
-    .person-badge.not-checked{color:rgba(240,230,211,0.3);}
-    .person-detail{font-size:10px;color:var(--muted);letter-spacing:1px;margin-top:4px;}
     .nav-tabs{width:100%;display:none;background:rgba(20,10,5,0.92);border-top:1px solid var(--gold2);position:fixed;bottom:0;left:0;z-index:100;}
     .nav-tabs.show{display:flex;}
     .nav-tab{flex:1;padding:12px 0;background:none;border:none;color:var(--muted);font-family:'Montserrat',sans-serif;font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:color 0.2s;}
@@ -107,10 +106,10 @@
 </div>
 
 <div class="view" id="scannerView">
-  <div class="scanner-header">
-    <div class="scanner-header-info">
-      <div class="scanner-role" id="roleLabel"></div>
-      <div class="scanner-name" id="nameLabel"></div>
+  <div class="top-bar">
+    <div class="top-bar-info">
+      <div class="top-role" id="roleLabel"></div>
+      <div class="top-name" id="nameLabel"></div>
     </div>
     <button class="logout-btn" onclick="doLogout()">Logout</button>
   </div>
@@ -140,15 +139,15 @@
 </div>
 
 <div class="view" id="statusView">
-  <div class="status-header">
-    <div class="scanner-header-info">
-      <div class="scanner-role" id="roleLabel2"></div>
-      <div class="scanner-name" id="nameLabel2"></div>
+  <div class="top-bar">
+    <div class="top-bar-info">
+      <div class="top-role" id="roleLabel2"></div>
+      <div class="top-name" id="nameLabel2"></div>
     </div>
     <button class="logout-btn" onclick="doLogout()">Logout</button>
   </div>
   <div class="status-body" id="statusBody">
-    <div style="text-align:center;padding:40px 0;color:var(--muted);font-size:12px;letter-spacing:1px;">Loading...</div>
+    <div style="text-align:center;padding:40px 0;color:var(--muted);font-size:12px;">Loading...</div>
   </div>
 </div>
 
@@ -160,19 +159,20 @@
 <script>
 const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwNniD-7Uwpus7k-ZhWTrGZpeh60qVilmWthAvlXtvkwks5WSXOQrTm1WcVaQCpsQ4A/exec";
 
-let currentRole=null,currentKey=null,currentRoleName=null,currentPin=null;
+let currentRole=null,currentKey=null,currentRoleName=null,currentPin=null,canScan=false;
 let selectedSession='morning';
-let qrScanner=null,scannerRunning=false;
-let countdownTimer=null;
+let qrScanner=null,scannerRunning=false,countdownTimer=null;
 
 window.addEventListener('load',()=>{
   const pin=sessionStorage.getItem('ccc_pin');
   const role=sessionStorage.getItem('ccc_role');
   const key=sessionStorage.getItem('ccc_key');
   const name=sessionStorage.getItem('ccc_name');
+  const scan=sessionStorage.getItem('ccc_can_scan');
   const sess=sessionStorage.getItem('ccc_session');
   if(pin&&role){
     currentRole=role;currentKey=key;currentRoleName=name;currentPin=pin;
+    canScan=scan==='true';
     if(sess)selectedSession=sess;
     enterApp();
   }
@@ -189,10 +189,12 @@ async function doLogin(){
     showLoading(false);
     if(res.success){
       currentRole=res.role;currentKey=res.key;currentRoleName=res.name;currentPin=pin;
+      canScan=res.canScan===true;
       sessionStorage.setItem('ccc_pin',pin);
       sessionStorage.setItem('ccc_role',res.role);
       sessionStorage.setItem('ccc_key',res.key);
       sessionStorage.setItem('ccc_name',res.name);
+      sessionStorage.setItem('ccc_can_scan',canScan?'true':'false');
       enterApp();
     }else{
       document.getElementById('loginError').textContent='Invalid PIN. Please try again.';
@@ -208,24 +210,22 @@ async function doLogin(){
 function enterApp(){
   const roleMap={admin:'Admin',registration:'Registration',team:'Team Leader',superleader:'Super Leader'};
   const roleText=roleMap[currentRole]||currentRole;
-  document.getElementById('roleLabel').textContent=roleText;
-  document.getElementById('nameLabel').textContent=currentRoleName;
-  document.getElementById('roleLabel2').textContent=roleText;
-  document.getElementById('nameLabel2').textContent=currentRoleName;
+  ['roleLabel','roleLabel2'].forEach(id=>document.getElementById(id).textContent=roleText);
+  ['nameLabel','nameLabel2'].forEach(id=>document.getElementById(id).textContent=currentRoleName);
 
-  const canScan=['admin','registration','team'].includes(currentRole);
   if(currentRole==='team')document.getElementById('sessionSelector').classList.add('show');
   if(selectedSession==='afternoon'){
     document.getElementById('btnMorning').classList.remove('active');
     document.getElementById('btnAfternoon').classList.add('active');
   }
+
   document.getElementById('navTabs').classList.add('show');
 
   if(canScan){
+    document.getElementById('tabScan').style.display='';
     showView('scannerView');
     startScanner();
   }else{
-    // superleader goes straight to status
     document.getElementById('tabScan').style.display='none';
     switchTab('status');
   }
@@ -241,22 +241,13 @@ function selectSession(s){
 function startScanner(){
   if(scannerRunning)return;
   qrScanner=new Html5Qrcode('reader');
-  qrScanner.start(
-    {facingMode:'environment'},
-    {fps:10,qrbox:{width:240,height:240}},
-    onScanSuccess,()=>{}
-  ).then(()=>{
-    scannerRunning=true;
-    document.getElementById('scanHint').textContent='Point camera at QR Code';
-  }).catch(err=>{
-    document.getElementById('scanHint').textContent='Camera error: '+err;
-  });
+  qrScanner.start({facingMode:'environment'},{fps:10,qrbox:{width:240,height:240}},onScanSuccess,()=>{})
+  .then(()=>{scannerRunning=true;document.getElementById('scanHint').textContent='Point camera at QR Code';})
+  .catch(err=>{document.getElementById('scanHint').textContent='Camera error: '+err;});
 }
 
 function stopScanner(){
-  if(qrScanner&&scannerRunning){
-    qrScanner.stop().then(()=>{scannerRunning=false;}).catch(()=>{});
-  }
+  if(qrScanner&&scannerRunning){qrScanner.stop().then(()=>{scannerRunning=false;}).catch(()=>{});}
 }
 
 function onScanSuccess(decodedText){
@@ -283,14 +274,9 @@ async function processQR(raw){
 }
 
 function showResult(res){
-  const icon=res.icon||'❌';
-  const status=res.status||'Error';
-  const nameCN=res.nameCN||'';
-  const nameEN=res.nameEN||'';
-  const role=res.role||'';
-  const detail=res.detail||'';
-  const isSuccess=icon.includes('✅');
-  const isWarn=icon.includes('⚠️');
+  const icon=res.icon||'❌',status=res.status||'Error';
+  const nameCN=res.nameCN||'',nameEN=res.nameEN||'',role=res.role||'',detail=res.detail||'';
+  const isSuccess=icon.includes('✅'),isWarn=icon.includes('⚠️');
   const cls=isSuccess?'success':isWarn?'warning':'error';
   document.getElementById('resultIcon').textContent=icon;
   document.getElementById('resultStatus').textContent=status;
@@ -306,8 +292,7 @@ function showResult(res){
 }
 
 function startCountdown(sec){
-  clearInterval(countdownTimer);
-  let n=sec;
+  clearInterval(countdownTimer);let n=sec;
   document.getElementById('countdown').textContent=`Resuming in ${n}s...`;
   countdownTimer=setInterval(()=>{
     n--;
@@ -321,8 +306,7 @@ function resumeScanner(){
   document.getElementById('countdown').textContent='';
   document.getElementById('resultCard').classList.remove('show');
   document.getElementById('resumeBtn').style.display='none';
-  if(qrScanner&&scannerRunning)qrScanner.resume();
-  else startScanner();
+  if(qrScanner&&scannerRunning)qrScanner.resume();else startScanner();
 }
 
 function buildURL(params){
@@ -332,17 +316,13 @@ function buildURL(params){
 }
 
 async function loadStatus(){
-  document.getElementById('statusBody').innerHTML='<div style="text-align:center;padding:40px 0;color:var(--muted);font-size:12px;letter-spacing:1px;">Loading...</div>';
+  document.getElementById('statusBody').innerHTML='<div style="text-align:center;padding:40px 0;color:var(--muted);font-size:12px;">Loading...</div>';
   try{
-    let action='';
-    if(currentRole==='admin')action='status_admin';
-    else if(currentRole==='registration')action='status_registration';
-    else if(currentRole==='superleader')action='status_superleader';
-    else if(currentRole==='team')action='status_team';
-    const res=await getAPI({action,pin:currentPin});
+    const actionMap={admin:'status_admin',registration:'status_registration',superleader:'status_superleader',team:'status_team'};
+    const res=await getAPI({action:actionMap[currentRole],pin:currentPin});
     if(res.success){
       if(currentRole==='admin')renderAdminStatus(res);
-      else if(currentRole==='registration'||currentRole==='superleader')renderOverviewStatus(res);
+      else if(currentRole==='registration'||currentRole==='superleader')renderParticipantStatus(res);
       else if(currentRole==='team')renderTeamStatus(res);
     }else{
       document.getElementById('statusBody').innerHTML=`<div style="text-align:center;padding:40px 0;color:#c0392b;font-size:12px;">${res.error||'Failed to load.'}</div>`;
@@ -354,134 +334,111 @@ async function loadStatus(){
 
 function renderAdminStatus(res){
   let html='';
-
-  // Crew section
-  html+='<div class="sec-title">Crew Check-in</div>';
-  const crewDayLabel=res.crewDayLabel||'';
-  const crewRows=res.crewRows||[];
-  const crewNotCheckedIn=res.crewNotCheckedIn||[];
-  const crewChecked=crewRows.length-crewNotCheckedIn.length;
-  html+=`<div class="stat-row"><div class="stat-box"><div class="stat-num">${crewRows.length}</div><div class="stat-label">Total</div></div><div class="stat-box"><div class="stat-num">${crewChecked}</div><div class="stat-label">Checked In</div></div><div class="stat-box"><div class="stat-num">${crewNotCheckedIn.length}</div><div class="stat-label">Not Yet</div></div></div>`;
-
-  if(crewNotCheckedIn.length>0){
-    html+='<div class="sec-title">Crew Not Checked In Today</div>';
-    crewNotCheckedIn.forEach(p=>{
-      html+=`<div class="person-row"><div class="person-main"><div class="person-name">${p.nameCN}</div><div class="person-badge not-checked">Not Yet</div></div><div class="person-detail">${p.nameEN} · ${p.role} · ${p.phone||''}</div></div>`;
+  // Crew
+  html+=`<div class="sec-title">Crew · ${res.crewDayLabel||'Today'}</div>`;
+  html+=`<div class="stat-row">
+    <div class="stat-box"><div class="stat-num">${res.crewTotal}</div><div class="stat-label">Total</div></div>
+    <div class="stat-box"><div class="stat-num">${res.crewCheckedIn}</div><div class="stat-label">Checked In</div></div>
+    <div class="stat-box"><div class="stat-num">${res.crewNotCheckedIn.length}</div><div class="stat-label">Not Yet</div></div>
+  </div>`;
+  if(res.crewNotCheckedIn.length>0){
+    html+='<div class="sec-title">Crew Not Checked In</div>';
+    res.crewNotCheckedIn.forEach(p=>{
+      html+=`<div class="person-row">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <div style="font-family:'Noto Serif SC',serif;font-size:13px;color:var(--text);letter-spacing:2px;">${p.nameCN}</div>
+          <div style="font-size:9px;color:var(--muted);">${p.crewRole}</div>
+        </div>
+        <div style="font-size:10px;color:var(--muted);margin-top:3px;">${p.nameEN} · ${p.phone||''}</div>
+        <div style="font-size:9px;color:rgba(200,169,110,0.4);margin-top:2px;">ID: ${p.id}</div>
+      </div>`;
     });
   }
-
-  // Participants overview by team
-  html+='<div class="sec-title" style="margin-top:20px">Participants by Team</div>';
-  const teamOverview=res.teamOverview||{};
-  const sessionCols=res.sessionCols||[];
-  let totalP=0,totalChecked=0;
-  Object.entries(teamOverview).forEach(([team,info])=>{
-    totalP+=info.total;
-    const teamChecked=Object.values(info.sessions).reduce((a,b)=>Math.max(a,b),0);
-    html+=`<div class="team-card"><div class="team-name">${team} <span style="font-size:10px;color:var(--muted);font-family:'Montserrat',sans-serif;">(${info.total}人)</span></div><div class="team-sessions">`;
-    sessionCols.forEach(s=>{
-      const n=info.sessions[s.name]||0;
-      const done=n>0;
-      html+=`<div class="session-pill ${done?'done':''}">${s.name}: ${n}/${info.total}</div>`;
-    });
-    html+='</div></div>';
-  });
-
-  html+=`<div class="stat-row" style="margin-top:8px"><div class="stat-box"><div class="stat-num">${totalP}</div><div class="stat-label">Total Participants</div></div></div>`;
-  html+='<button class="btn" style="margin-top:12px" onclick="exportAdminCSV()">Export Participants CSV</button>';
+  // Participants
+  const sessions=res.partSessions||[];
+  const sessionLabel=sessions.length>0?sessions.join(' / '):'Today';
+  html+=`<div class="sec-title" style="margin-top:24px">Participants · ${sessionLabel}</div>`;
+  html+=`<div class="stat-row">
+    <div class="stat-box"><div class="stat-num">${res.partTotal}</div><div class="stat-label">Total</div></div>
+    <div class="stat-box"><div class="stat-num">${res.partTotalCheckedIn}</div><div class="stat-label">Checked In</div></div>
+    <div class="stat-box"><div class="stat-num">${res.partTotal-res.partTotalCheckedIn}</div><div class="stat-label">Not Yet</div></div>
+  </div>`;
+  html+=renderTeamBlocks(res.partTeamData,false);
   document.getElementById('statusBody').innerHTML=html;
-  window._adminRes=res;
 }
 
-function renderOverviewStatus(res){
+function renderParticipantStatus(res){
   let html='';
-  const sessionCols=res.sessionCols||[];
-  const teamOverview=res.teamOverview||{};
-  const total=res.totalParticipants||0;
-
-  html+=`<div class="sec-title">Overview</div>`;
-  html+=`<div class="stat-row"><div class="stat-box"><div class="stat-num">${total}</div><div class="stat-label">Total</div></div></div>`;
-
-  html+='<div class="sec-title">By Team & Session</div>';
-  Object.entries(teamOverview).forEach(([team,info])=>{
-    html+=`<div class="team-card"><div class="team-name">${team} <span style="font-size:10px;color:var(--muted);font-family:'Montserrat',sans-serif;">(${info.total}人)</span></div><div class="team-sessions">`;
-    sessionCols.forEach(s=>{
-      const n=info.sessions[s.name]||0;
-      const done=n>0;
-      html+=`<div class="session-pill ${done?'done':''}">${s.name}: ${n}/${info.total}</div>`;
-    });
-    html+='</div></div>';
-  });
-
-  html+='<button class="btn" style="margin-top:12px" onclick="exportOverviewCSV()">Export CSV</button>';
+  const sessions=res.sessions||[];
+  const sessionLabel=sessions.length>0?sessions.join(' / '):'Today';
+  html+=`<div class="sec-title">${sessionLabel}</div>`;
+  html+=`<div class="stat-row">
+    <div class="stat-box"><div class="stat-num">${res.total}</div><div class="stat-label">Total</div></div>
+    <div class="stat-box"><div class="stat-num">${res.totalCheckedIn}</div><div class="stat-label">Checked In</div></div>
+    <div class="stat-box"><div class="stat-num">${res.total-res.totalCheckedIn}</div><div class="stat-label">Not Yet</div></div>
+  </div>`;
+  html+=renderTeamBlocks(res.teamData,true);
   document.getElementById('statusBody').innerHTML=html;
-  window._overviewRes=res;
+}
+
+function renderTeamBlocks(teamData,showNotCheckedIn){
+  let html='<div class="sec-title">By Team</div>';
+  Object.entries(teamData).forEach(([team,info])=>{
+    const notYet=info.notCheckedIn||[];
+    html+=`<div class="team-block">
+      <div class="team-header">
+        <div class="team-name-label">${team}</div>
+        <div class="team-count">${info.checkedIn}/${info.total} checked in</div>
+      </div>`;
+    if(showNotCheckedIn&&notYet.length>0){
+      html+='<div class="not-checked-list">';
+      notYet.forEach(p=>{
+        html+=`<div class="not-checked-item">
+          <div class="nci-id">${p.id}</div>
+          <div class="nci-info">
+            <div class="nci-name">${p.nameCN}</div>
+            <div class="nci-detail">${p.nameEN} · 📱${p.phone||'-'} · 房${p.room||'-'}</div>
+          </div>
+        </div>`;
+      });
+      html+='</div>';
+    }
+    html+='</div>';
+  });
+  return html;
 }
 
 function renderTeamStatus(res){
   let html='';
-  const sessionCols=res.sessionCols||[];
-  const sessionStats=res.sessionStats||{};
-  const notCheckedIn=res.notCheckedIn||[];
-  const total=res.total||0;
-  const teamName=res.teamName||'';
-
-  html+=`<div class="sec-title">${teamName} Overview</div>`;
-  html+=`<div class="stat-row"><div class="stat-box"><div class="stat-num">${total}</div><div class="stat-label">Total</div></div>`;
-  sessionCols.forEach(s=>{
-    const n=sessionStats[s.name]||0;
-    html+=`<div class="stat-box"><div class="stat-num">${n}</div><div class="stat-label">${s.name}</div></div>`;
-  });
-  html+='</div>';
-
-  if(notCheckedIn.length>0){
-    html+=`<div class="sec-title">Not Checked In Today (${notCheckedIn.length})</div>`;
-    notCheckedIn.forEach(p=>{
+  const sessions=res.sessions||[];
+  const sessionLabel=sessions.length>0?sessions.join(' / '):'Today';
+  html+=`<div class="sec-title">${res.teamName} · ${sessionLabel}</div>`;
+  html+=`<div class="stat-row">
+    <div class="stat-box"><div class="stat-num">${res.total}</div><div class="stat-label">Total</div></div>
+    <div class="stat-box"><div class="stat-num">${res.checkedIn}</div><div class="stat-label">Checked In</div></div>
+    <div class="stat-box"><div class="stat-num">${res.total-res.checkedIn}</div><div class="stat-label">Not Yet</div></div>
+  </div>`;
+  const notYet=res.notCheckedIn||[];
+  if(notYet.length>0){
+    html+=`<div class="sec-title">Not Checked In (${notYet.length})</div>`;
+    notYet.forEach(p=>{
       html+=`<div class="person-row">
-        <div class="person-main"><div class="person-name">${p.nameCN}</div><div class="person-badge not-checked">Not Yet</div></div>
-        <div class="person-detail">${p.nameEN}</div>
-        <div class="person-detail">📱 ${p.phone||'-'} · 房号 ${p.room||'-'}</div>
-        <div class="person-detail" style="color:rgba(200,169,110,0.4)">ID: ${p.id}</div>
+        <div style="display:flex;justify-content:space-between;">
+          <div style="font-family:'Noto Serif SC',serif;font-size:13px;color:var(--text);letter-spacing:2px;">${p.nameCN}</div>
+          <div style="font-size:9px;color:rgba(200,169,110,0.4);">ID: ${p.id}</div>
+        </div>
+        <div style="font-size:10px;color:var(--muted);margin-top:3px;">${p.nameEN}</div>
+        <div style="font-size:10px;color:var(--muted);margin-top:2px;">📱 ${p.phone||'-'} · 房号 ${p.room||'-'}</div>
       </div>`;
     });
   }else{
     html+='<div style="text-align:center;padding:16px 0;color:var(--gold);font-size:12px;letter-spacing:1px;">✓ All members checked in!</div>';
   }
-
   document.getElementById('statusBody').innerHTML=html;
 }
 
-function getTodayKey(){const now=new Date();return `${now.getDate()}/${now.getMonth()+1}`;}
-function isSessionToday(n,t){return n.includes(t)||n.toLowerCase().includes('testing');}
-
-function exportAdminCSV(){
-  const res=window._adminRes;if(!res)return;
-  const headers=res.partHeaders||[];
-  const rows=res.partRows||[];
-  let csv=headers.map(h=>`"${h}"`).join(',')+'\n';
-  rows.forEach(r=>{csv+=r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')+'\n';});
-  downloadCSV(csv,'admin_participants.csv');
-}
-
-function exportOverviewCSV(){
-  const res=window._overviewRes;if(!res)return;
-  const headers=res.headers||[];
-  const rows=res.rows||[];
-  let csv=headers.map(h=>`"${h}"`).join(',')+'\n';
-  rows.forEach(r=>{csv+=r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')+'\n';});
-  downloadCSV(csv,'participants_checkin.csv');
-}
-
-function downloadCSV(csv,filename){
-  const blob=new Blob([csv],{type:'text/csv'});
-  const a=document.createElement('a');
-  a.href=URL.createObjectURL(blob);
-  a.download=filename;
-  a.click();
-}
-
 function switchTab(tab){
-  if(tab==='scan'&&['admin','registration','team'].includes(currentRole)){
+  if(tab==='scan'&&canScan){
     showView('scannerView');
     if(!scannerRunning)startScanner();
     document.getElementById('tabScan').classList.add('active');
@@ -501,10 +458,8 @@ function showView(id){
 }
 
 function doLogout(){
-  stopScanner();
-  clearInterval(countdownTimer);
-  sessionStorage.clear();
-  currentRole=null;currentKey=null;currentRoleName=null;currentPin=null;
+  stopScanner();clearInterval(countdownTimer);sessionStorage.clear();
+  currentRole=null;currentKey=null;currentRoleName=null;currentPin=null;canScan=false;
   document.getElementById('pinInput').value='';
   document.getElementById('loginError').style.display='none';
   document.getElementById('resultCard').classList.remove('show');
