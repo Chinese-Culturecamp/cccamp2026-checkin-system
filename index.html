@@ -62,22 +62,29 @@
     .countdown{font-size:10px;color:var(--muted);letter-spacing:1px;margin-top:10px;}
     #statusView{justify-content:flex-start;padding:0;}
     .status-header{width:100%;background:rgba(20,10,5,0.92);border-bottom:1px solid var(--gold2);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
-    .status-body{width:100%;max-width:500px;padding:16px;align-self:center;overflow-y:auto;}
-    .status-section{margin-bottom:20px;}
-    .status-section-title{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:10px;}
-    .stat-row{display:flex;gap:10px;margin-bottom:10px;flex-wrap:wrap;}
-    .stat-box{flex:1;min-width:80px;background:var(--card-bg);border:1px solid var(--gold2);border-radius:8px;padding:14px;text-align:center;}
-    .stat-num{font-family:'Noto Serif SC',serif;font-size:28px;color:var(--text);}
+    .status-body{width:100%;max-width:560px;padding:16px;align-self:center;overflow-y:auto;padding-bottom:70px;}
+    .sec-title{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:10px;margin-top:20px;}
+    .sec-title:first-child{margin-top:0;}
+    .stat-row{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;}
+    .stat-box{flex:1;min-width:70px;background:var(--card-bg);border:1px solid var(--gold2);border-radius:8px;padding:12px;text-align:center;}
+    .stat-num{font-family:'Noto Serif SC',serif;font-size:24px;color:var(--text);}
     .stat-label{font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-top:4px;}
-    .person-row{background:var(--card-bg);border:1px solid var(--gold2);border-radius:8px;padding:12px 14px;margin-bottom:6px;display:flex;align-items:center;justify-content:space-between;}
-    .person-name{font-family:'Noto Serif SC',serif;font-size:14px;color:var(--text);letter-spacing:2px;}
-    .person-status.checked{color:var(--gold);font-size:9px;letter-spacing:1px;}
-    .person-status.not-checked{color:rgba(240,230,211,0.3);font-size:9px;letter-spacing:1px;}
+    .team-card{background:var(--card-bg);border:1px solid var(--gold2);border-radius:8px;padding:14px;margin-bottom:8px;}
+    .team-name{font-family:'Noto Serif SC',serif;font-size:14px;color:var(--text);letter-spacing:2px;margin-bottom:8px;}
+    .team-sessions{display:flex;gap:6px;flex-wrap:wrap;}
+    .session-pill{font-size:9px;letter-spacing:1px;padding:4px 8px;border-radius:20px;border:1px solid var(--gold2);color:var(--muted);}
+    .session-pill.done{border-color:var(--gold);color:var(--gold);}
+    .person-row{background:var(--card-bg);border:1px solid var(--gold2);border-radius:8px;padding:10px 14px;margin-bottom:6px;}
+    .person-main{display:flex;align-items:center;justify-content:space-between;}
+    .person-name{font-family:'Noto Serif SC',serif;font-size:13px;color:var(--text);letter-spacing:2px;}
+    .person-badge{font-size:9px;letter-spacing:1px;}
+    .person-badge.checked{color:var(--gold);}
+    .person-badge.not-checked{color:rgba(240,230,211,0.3);}
+    .person-detail{font-size:10px;color:var(--muted);letter-spacing:1px;margin-top:4px;}
     .nav-tabs{width:100%;display:none;background:rgba(20,10,5,0.92);border-top:1px solid var(--gold2);position:fixed;bottom:0;left:0;z-index:100;}
     .nav-tabs.show{display:flex;}
     .nav-tab{flex:1;padding:12px 0;background:none;border:none;color:var(--muted);font-family:'Montserrat',sans-serif;font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:color 0.2s;}
     .nav-tab.active{color:var(--gold);}
-    .has-nav{padding-bottom:56px !important;}
     .loading{position:fixed;inset:0;background:rgba(10,5,2,0.7);display:none;align-items:center;justify-content:center;z-index:999;}
     .loading.show{display:flex;}
     .spinner{width:36px;height:36px;border:2px solid var(--gold2);border-top-color:var(--gold);border-radius:50%;animation:spin 0.7s linear infinite;}
@@ -107,7 +114,7 @@
     </div>
     <button class="logout-btn" onclick="doLogout()">Logout</button>
   </div>
-  <div class="scanner-body has-nav">
+  <div class="scanner-body">
     <div class="session-selector" id="sessionSelector">
       <div class="session-label">Select Session</div>
       <div class="session-btns">
@@ -140,7 +147,7 @@
     </div>
     <button class="logout-btn" onclick="doLogout()">Logout</button>
   </div>
-  <div class="status-body has-nav" id="statusBody">
+  <div class="status-body" id="statusBody">
     <div style="text-align:center;padding:40px 0;color:var(--muted);font-size:12px;letter-spacing:1px;">Loading...</div>
   </div>
 </div>
@@ -156,7 +163,7 @@ const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwNniD-7Uwpus7k-ZhW
 let currentRole=null,currentKey=null,currentRoleName=null,currentPin=null;
 let selectedSession='morning';
 let qrScanner=null,scannerRunning=false;
-let countdownTimer=null,_statusDoc=null;
+let countdownTimer=null;
 
 window.addEventListener('load',()=>{
   const pin=sessionStorage.getItem('ccc_pin');
@@ -166,7 +173,7 @@ window.addEventListener('load',()=>{
   const sess=sessionStorage.getItem('ccc_session');
   if(pin&&role){
     currentRole=role;currentKey=key;currentRoleName=name;currentPin=pin;
-    if(sess){selectedSession=sess;}
+    if(sess)selectedSession=sess;
     enterApp();
   }
 });
@@ -199,20 +206,29 @@ async function doLogin(){
 }
 
 function enterApp(){
-  const roleMap={admin:'Admin',registration:'Registration',team:'Team Leader'};
+  const roleMap={admin:'Admin',registration:'Registration',team:'Team Leader',superleader:'Super Leader'};
   const roleText=roleMap[currentRole]||currentRole;
   document.getElementById('roleLabel').textContent=roleText;
   document.getElementById('nameLabel').textContent=currentRoleName;
   document.getElementById('roleLabel2').textContent=roleText;
   document.getElementById('nameLabel2').textContent=currentRoleName;
+
+  const canScan=['admin','registration','team'].includes(currentRole);
   if(currentRole==='team')document.getElementById('sessionSelector').classList.add('show');
   if(selectedSession==='afternoon'){
     document.getElementById('btnMorning').classList.remove('active');
     document.getElementById('btnAfternoon').classList.add('active');
   }
   document.getElementById('navTabs').classList.add('show');
-  showView('scannerView');
-  startScanner();
+
+  if(canScan){
+    showView('scannerView');
+    startScanner();
+  }else{
+    // superleader goes straight to status
+    document.getElementById('tabScan').style.display='none';
+    switchTab('status');
+  }
 }
 
 function selectSession(s){
@@ -251,12 +267,10 @@ function onScanSuccess(decodedText){
 async function processQR(raw){
   let id=raw.trim();
   try{const u=new URL(raw);const p=u.searchParams.get('id');if(p)id=p.trim();}catch(e){}
-
   let params={id};
   if(currentRole==='admin'){params.action='checkin_crew';params.pin=currentPin;}
   else if(currentRole==='registration'){params.action='checkin_participant';params.pin=currentPin;}
   else if(currentRole==='team'){params.action='checkin_team';params.pin=currentPin;params.session_type=selectedSession;}
-
   showLoading(true);
   try{
     const res=await getAPI(params);
@@ -264,7 +278,7 @@ async function processQR(raw){
     showResult(res);
   }catch(e){
     showLoading(false);
-    showResult({success:false,icon:'❌',status:'Connection Error',nameCN:'',nameEN:'',role:'',detail:''});
+    showResult({icon:'❌',status:'Connection Error',nameCN:'',nameEN:'',role:'',detail:''});
   }
 }
 
@@ -278,7 +292,6 @@ function showResult(res){
   const isSuccess=icon.includes('✅');
   const isWarn=icon.includes('⚠️');
   const cls=isSuccess?'success':isWarn?'warning':'error';
-
   document.getElementById('resultIcon').textContent=icon;
   document.getElementById('resultStatus').textContent=status;
   document.getElementById('resultStatus').className='result-status '+cls;
@@ -289,7 +302,6 @@ function showResult(res){
   document.getElementById('resultDivider').style.display=nameCN?'block':'none';
   document.getElementById('resultCard').classList.add('show');
   document.getElementById('resumeBtn').style.display='block';
-
   if(isSuccess)startCountdown(4);
 }
 
@@ -322,88 +334,154 @@ function buildURL(params){
 async function loadStatus(){
   document.getElementById('statusBody').innerHTML='<div style="text-align:center;padding:40px 0;color:var(--muted);font-size:12px;letter-spacing:1px;">Loading...</div>';
   try{
-    let params={};
-    if(currentRole==='admin')params={action:'dashboard',pin:currentPin};
-    else if(currentRole==='registration')params={action:'status_registration',pin:currentPin};
-    else if(currentRole==='team')params={action:'status_team',pin:currentPin};
-    const res=await getAPI(params);
+    let action='';
+    if(currentRole==='admin')action='status_admin';
+    else if(currentRole==='registration')action='status_registration';
+    else if(currentRole==='superleader')action='status_superleader';
+    else if(currentRole==='team')action='status_team';
+    const res=await getAPI({action,pin:currentPin});
     if(res.success){
-      if(currentRole==='team')renderTeamStatus(res.data);
-      else renderTableStatus(res.data);
+      if(currentRole==='admin')renderAdminStatus(res);
+      else if(currentRole==='registration'||currentRole==='superleader')renderOverviewStatus(res);
+      else if(currentRole==='team')renderTeamStatus(res);
     }else{
-      document.getElementById('statusBody').innerHTML='<div style="text-align:center;padding:40px 0;color:#c0392b;font-size:12px;">Failed to load.</div>';
+      document.getElementById('statusBody').innerHTML=`<div style="text-align:center;padding:40px 0;color:#c0392b;font-size:12px;">${res.error||'Failed to load.'}</div>`;
     }
   }catch(e){
     document.getElementById('statusBody').innerHTML='<div style="text-align:center;padding:40px 0;color:#c0392b;font-size:12px;">Failed to load.</div>';
   }
 }
 
-function renderTeamStatus(data){
-  if(!data||!data.rows||!data.rows.length){document.getElementById('statusBody').innerHTML='<div style="text-align:center;padding:40px 0;color:var(--muted);font-size:12px;">No data.</div>';return;}
-  const headers=data.headers;
-  const rows=data.rows;
-  const sessionCols=[];
-  headers.forEach((h,i)=>{if(i>=8)sessionCols.push({name:h,col:i});});
-  const today=getTodayKey();
-  const todaySessions=sessionCols.filter(s=>isSessionToday(s.name,today));
-  let html='<div class="status-section">';
-  if(todaySessions.length){
-    html+='<div class="status-section-title">Today</div><div class="stat-row">';
-    todaySessions.forEach(s=>{
-      const n=rows.filter(r=>r[s.col]&&String(r[s.col]).trim()).length;
-      html+=`<div class="stat-box"><div class="stat-num">${n}/${rows.length}</div><div class="stat-label">${s.name}</div></div>`;
+function renderAdminStatus(res){
+  let html='';
+
+  // Crew section
+  html+='<div class="sec-title">Crew Check-in</div>';
+  const crewDayLabel=res.crewDayLabel||'';
+  const crewRows=res.crewRows||[];
+  const crewNotCheckedIn=res.crewNotCheckedIn||[];
+  const crewChecked=crewRows.length-crewNotCheckedIn.length;
+  html+=`<div class="stat-row"><div class="stat-box"><div class="stat-num">${crewRows.length}</div><div class="stat-label">Total</div></div><div class="stat-box"><div class="stat-num">${crewChecked}</div><div class="stat-label">Checked In</div></div><div class="stat-box"><div class="stat-num">${crewNotCheckedIn.length}</div><div class="stat-label">Not Yet</div></div></div>`;
+
+  if(crewNotCheckedIn.length>0){
+    html+='<div class="sec-title">Crew Not Checked In Today</div>';
+    crewNotCheckedIn.forEach(p=>{
+      html+=`<div class="person-row"><div class="person-main"><div class="person-name">${p.nameCN}</div><div class="person-badge not-checked">Not Yet</div></div><div class="person-detail">${p.nameEN} · ${p.role} · ${p.phone||''}</div></div>`;
     });
-    html+='</div>';
   }
-  html+='<div class="status-section-title" style="margin-top:16px">Members</div>';
-  rows.forEach(r=>{
-    const nameCN=r[1]||'';const nameEN=r[2]||'';
-    const checked=todaySessions.some(s=>r[s.col]&&String(r[s.col]).trim());
-    html+=`<div class="person-row"><div><div class="person-name">${nameCN}</div><div style="font-size:10px;color:var(--muted);letter-spacing:1px;">${nameEN}</div></div><div class="person-status ${checked?'checked':'not-checked'}">${checked?'✓ Checked In':'Not Yet'}</div></div>`;
+
+  // Participants overview by team
+  html+='<div class="sec-title" style="margin-top:20px">Participants by Team</div>';
+  const teamOverview=res.teamOverview||{};
+  const sessionCols=res.sessionCols||[];
+  let totalP=0,totalChecked=0;
+  Object.entries(teamOverview).forEach(([team,info])=>{
+    totalP+=info.total;
+    const teamChecked=Object.values(info.sessions).reduce((a,b)=>Math.max(a,b),0);
+    html+=`<div class="team-card"><div class="team-name">${team} <span style="font-size:10px;color:var(--muted);font-family:'Montserrat',sans-serif;">(${info.total}人)</span></div><div class="team-sessions">`;
+    sessionCols.forEach(s=>{
+      const n=info.sessions[s.name]||0;
+      const done=n>0;
+      html+=`<div class="session-pill ${done?'done':''}">${s.name}: ${n}/${info.total}</div>`;
+    });
+    html+='</div></div>';
   });
-  html+='</div><button class="btn" style="margin-top:10px" onclick="exportData()">Export CSV</button>';
+
+  html+=`<div class="stat-row" style="margin-top:8px"><div class="stat-box"><div class="stat-num">${totalP}</div><div class="stat-label">Total Participants</div></div></div>`;
+  html+='<button class="btn" style="margin-top:12px" onclick="exportAdminCSV()">Export Participants CSV</button>';
   document.getElementById('statusBody').innerHTML=html;
-  window._exportData=data;
+  window._adminRes=res;
 }
 
-function renderTableStatus(data){
-  if(!data||!data.rows||!data.rows.length){document.getElementById('statusBody').innerHTML='<div style="text-align:center;padding:40px 0;color:var(--muted);font-size:12px;">No data.</div>';return;}
-  const headers=data.headers;
-  const rows=data.rows;
-  const sessionCols=[];
-  headers.forEach((h,i)=>{if(i>=8)sessionCols.push({name:h,col:i});});
-  const today=getTodayKey();
-  const todayCols=sessionCols.filter(s=>isSessionToday(s.name,today));
-  let html='<div class="status-section"><div class="status-section-title">Overview</div><div class="stat-row">';
-  html+=`<div class="stat-box"><div class="stat-num">${rows.length}</div><div class="stat-label">Total</div></div>`;
-  todayCols.forEach(s=>{
-    const n=rows.filter(r=>r[s.col]&&String(r[s.col]).trim()).length;
+function renderOverviewStatus(res){
+  let html='';
+  const sessionCols=res.sessionCols||[];
+  const teamOverview=res.teamOverview||{};
+  const total=res.totalParticipants||0;
+
+  html+=`<div class="sec-title">Overview</div>`;
+  html+=`<div class="stat-row"><div class="stat-box"><div class="stat-num">${total}</div><div class="stat-label">Total</div></div></div>`;
+
+  html+='<div class="sec-title">By Team & Session</div>';
+  Object.entries(teamOverview).forEach(([team,info])=>{
+    html+=`<div class="team-card"><div class="team-name">${team} <span style="font-size:10px;color:var(--muted);font-family:'Montserrat',sans-serif;">(${info.total}人)</span></div><div class="team-sessions">`;
+    sessionCols.forEach(s=>{
+      const n=info.sessions[s.name]||0;
+      const done=n>0;
+      html+=`<div class="session-pill ${done?'done':''}">${s.name}: ${n}/${info.total}</div>`;
+    });
+    html+='</div></div>';
+  });
+
+  html+='<button class="btn" style="margin-top:12px" onclick="exportOverviewCSV()">Export CSV</button>';
+  document.getElementById('statusBody').innerHTML=html;
+  window._overviewRes=res;
+}
+
+function renderTeamStatus(res){
+  let html='';
+  const sessionCols=res.sessionCols||[];
+  const sessionStats=res.sessionStats||{};
+  const notCheckedIn=res.notCheckedIn||[];
+  const total=res.total||0;
+  const teamName=res.teamName||'';
+
+  html+=`<div class="sec-title">${teamName} Overview</div>`;
+  html+=`<div class="stat-row"><div class="stat-box"><div class="stat-num">${total}</div><div class="stat-label">Total</div></div>`;
+  sessionCols.forEach(s=>{
+    const n=sessionStats[s.name]||0;
     html+=`<div class="stat-box"><div class="stat-num">${n}</div><div class="stat-label">${s.name}</div></div>`;
   });
-  html+='</div></div><button class="btn" style="margin-top:10px" onclick="exportData()">Export CSV</button>';
-  document.getElementById('statusBody').innerHTML=html;
-  window._exportData=data;
-}
+  html+='</div>';
 
-function exportData(){
-  const data=window._exportData;
-  if(!data)return;
-  let csv=data.headers.map(h=>`"${h}"`).join(',')+'\n';
-  data.rows.forEach(r=>{
-    csv+=r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')+'\n';
-  });
-  const blob=new Blob([csv],{type:'text/csv'});
-  const a=document.createElement('a');
-  a.href=URL.createObjectURL(blob);
-  a.download='checkin_export.csv';
-  a.click();
+  if(notCheckedIn.length>0){
+    html+=`<div class="sec-title">Not Checked In Today (${notCheckedIn.length})</div>`;
+    notCheckedIn.forEach(p=>{
+      html+=`<div class="person-row">
+        <div class="person-main"><div class="person-name">${p.nameCN}</div><div class="person-badge not-checked">Not Yet</div></div>
+        <div class="person-detail">${p.nameEN}</div>
+        <div class="person-detail">📱 ${p.phone||'-'} · 房号 ${p.room||'-'}</div>
+        <div class="person-detail" style="color:rgba(200,169,110,0.4)">ID: ${p.id}</div>
+      </div>`;
+    });
+  }else{
+    html+='<div style="text-align:center;padding:16px 0;color:var(--gold);font-size:12px;letter-spacing:1px;">✓ All members checked in!</div>';
+  }
+
+  document.getElementById('statusBody').innerHTML=html;
 }
 
 function getTodayKey(){const now=new Date();return `${now.getDate()}/${now.getMonth()+1}`;}
 function isSessionToday(n,t){return n.includes(t)||n.toLowerCase().includes('testing');}
 
+function exportAdminCSV(){
+  const res=window._adminRes;if(!res)return;
+  const headers=res.partHeaders||[];
+  const rows=res.partRows||[];
+  let csv=headers.map(h=>`"${h}"`).join(',')+'\n';
+  rows.forEach(r=>{csv+=r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')+'\n';});
+  downloadCSV(csv,'admin_participants.csv');
+}
+
+function exportOverviewCSV(){
+  const res=window._overviewRes;if(!res)return;
+  const headers=res.headers||[];
+  const rows=res.rows||[];
+  let csv=headers.map(h=>`"${h}"`).join(',')+'\n';
+  rows.forEach(r=>{csv+=r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')+'\n';});
+  downloadCSV(csv,'participants_checkin.csv');
+}
+
+function downloadCSV(csv,filename){
+  const blob=new Blob([csv],{type:'text/csv'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download=filename;
+  a.click();
+}
+
 function switchTab(tab){
-  if(tab==='scan'){
+  if(tab==='scan'&&['admin','registration','team'].includes(currentRole)){
     showView('scannerView');
     if(!scannerRunning)startScanner();
     document.getElementById('tabScan').classList.add('active');
@@ -433,6 +511,7 @@ function doLogout(){
   document.getElementById('resumeBtn').style.display='none';
   document.getElementById('sessionSelector').classList.remove('show');
   document.getElementById('navTabs').classList.remove('show');
+  document.getElementById('tabScan').style.display='';
   showView('loginView');
 }
 
