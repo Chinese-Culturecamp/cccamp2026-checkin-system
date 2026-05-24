@@ -69,17 +69,22 @@
     .stat-num{font-family:'Noto Serif SC',serif;font-size:24px;color:var(--text);}
     .stat-label{font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-top:4px;}
     .team-block{background:var(--card-bg);border:1px solid var(--gold2);border-radius:8px;padding:14px;margin-bottom:10px;}
-    .team-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+    .team-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;}
     .team-name-label{font-family:'Noto Serif SC',serif;font-size:13px;color:var(--text);letter-spacing:2px;}
     .team-count{font-size:10px;color:var(--gold);letter-spacing:1px;}
-    .not-checked-list{margin-top:8px;border-top:1px solid rgba(200,169,110,0.15);padding-top:8px;}
-    .not-checked-item{padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.04);display:flex;gap:10px;align-items:flex-start;}
-    .not-checked-item:last-child{border-bottom:none;}
-    .nci-id{font-size:9px;color:rgba(200,169,110,0.5);letter-spacing:1px;min-width:56px;padding-top:2px;}
+    .not-checked-list{margin-top:10px;border-top:1px solid rgba(200,169,110,0.15);padding-top:8px;}
+    .nci-item{padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.04);display:flex;gap:10px;align-items:flex-start;}
+    .nci-item:last-child{border-bottom:none;}
+    .nci-id{font-size:9px;color:rgba(200,169,110,0.5);letter-spacing:1px;min-width:56px;padding-top:2px;flex-shrink:0;}
     .nci-info{flex:1;}
     .nci-name{font-family:'Noto Serif SC',serif;font-size:13px;color:var(--text);letter-spacing:2px;}
     .nci-detail{font-size:10px;color:var(--muted);letter-spacing:1px;margin-top:2px;}
-    .person-row{background:var(--card-bg);border:1px solid var(--gold2);border-radius:8px;padding:10px 14px;margin-bottom:6px;}
+    .crew-item{background:var(--card-bg);border:1px solid var(--gold2);border-radius:8px;padding:10px 14px;margin-bottom:6px;}
+    .crew-item-top{display:flex;justify-content:space-between;align-items:center;}
+    .crew-item-name{font-family:'Noto Serif SC',serif;font-size:13px;color:var(--text);letter-spacing:2px;}
+    .crew-item-role{font-size:9px;color:var(--muted);letter-spacing:1px;}
+    .crew-item-detail{font-size:10px;color:var(--muted);margin-top:3px;}
+    .crew-item-id{font-size:9px;color:rgba(200,169,110,0.4);margin-top:2px;}
     .nav-tabs{width:100%;display:none;background:rgba(20,10,5,0.92);border-top:1px solid var(--gold2);position:fixed;bottom:0;left:0;z-index:100;}
     .nav-tabs.show{display:flex;}
     .nav-tab{flex:1;padding:12px 0;background:none;border:none;color:var(--muted);font-family:'Montserrat',sans-serif;font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:color 0.2s;}
@@ -212,15 +217,12 @@ function enterApp(){
   const roleText=roleMap[currentRole]||currentRole;
   ['roleLabel','roleLabel2'].forEach(id=>document.getElementById(id).textContent=roleText);
   ['nameLabel','nameLabel2'].forEach(id=>document.getElementById(id).textContent=currentRoleName);
-
   if(currentRole==='team')document.getElementById('sessionSelector').classList.add('show');
   if(selectedSession==='afternoon'){
     document.getElementById('btnMorning').classList.remove('active');
     document.getElementById('btnAfternoon').classList.add('active');
   }
-
   document.getElementById('navTabs').classList.add('show');
-
   if(canScan){
     document.getElementById('tabScan').style.display='';
     showView('scannerView');
@@ -309,12 +311,6 @@ function resumeScanner(){
   if(qrScanner&&scannerRunning)qrScanner.resume();else startScanner();
 }
 
-function buildURL(params){
-  const u=new URL(WEB_APP_URL);
-  Object.entries(params).forEach(([k,v])=>u.searchParams.set(k,v));
-  return u.toString();
-}
-
 async function loadStatus(){
   document.getElementById('statusBody').innerHTML='<div style="text-align:center;padding:40px 0;color:var(--muted);font-size:12px;">Loading...</div>';
   try{
@@ -328,112 +324,145 @@ async function loadStatus(){
       document.getElementById('statusBody').innerHTML=`<div style="text-align:center;padding:40px 0;color:#c0392b;font-size:12px;">${res.error||'Failed to load.'}</div>`;
     }
   }catch(e){
-    document.getElementById('statusBody').innerHTML='<div style="text-align:center;padding:40px 0;color:#c0392b;font-size:12px;">Failed to load.</div>';
+    document.getElementById('statusBody').innerHTML='<div style="text-align:center;padding:40px 0;color:#c0392b;font-size:12px;">Failed to load. '+e+'</div>';
   }
 }
 
 function renderAdminStatus(res){
   let html='';
-  // Crew
-  html+=`<div class="sec-title">Crew · ${res.crewDayLabel||'Today'}</div>`;
+  // Crew overview
+  const crewTotal=Number(res.crewTotal)||0;
+  const crewCheckedIn=Number(res.crewCheckedIn)||0;
+  const crewNotYet=crewTotal-crewCheckedIn;
+  const crewDay=res.crewDayLabel||'Today';
+  html+=`<div class="sec-title">Crew · ${crewDay}</div>`;
   html+=`<div class="stat-row">
-    <div class="stat-box"><div class="stat-num">${res.crewTotal}</div><div class="stat-label">Total</div></div>
-    <div class="stat-box"><div class="stat-num">${res.crewCheckedIn}</div><div class="stat-label">Checked In</div></div>
-    <div class="stat-box"><div class="stat-num">${res.crewNotCheckedIn.length}</div><div class="stat-label">Not Yet</div></div>
+    <div class="stat-box"><div class="stat-num">${crewCheckedIn}</div><div class="stat-label">Checked In</div></div>
+    <div class="stat-box"><div class="stat-num">${crewNotYet}</div><div class="stat-label">Not Yet</div></div>
   </div>`;
-  if(res.crewNotCheckedIn.length>0){
-    html+='<div class="sec-title">Crew Not Checked In</div>';
-    res.crewNotCheckedIn.forEach(p=>{
-      html+=`<div class="person-row">
-        <div style="display:flex;justify-content:space-between;align-items:center;">
-          <div style="font-family:'Noto Serif SC',serif;font-size:13px;color:var(--text);letter-spacing:2px;">${p.nameCN}</div>
-          <div style="font-size:9px;color:var(--muted);">${p.crewRole}</div>
+
+  // Crew not checked in
+  const crewNot=res.crewNotCheckedIn||[];
+  if(crewNot.length>0){
+    html+=`<div class="sec-title">Crew Not Checked In (${crewNot.length})</div>`;
+    crewNot.forEach(p=>{
+      html+=`<div class="crew-item">
+        <div class="crew-item-top">
+          <div class="crew-item-name">${p.nameCN||''}</div>
+          <div class="crew-item-role">${p.crewRole||''}</div>
         </div>
-        <div style="font-size:10px;color:var(--muted);margin-top:3px;">${p.nameEN} · ${p.phone||''}</div>
-        <div style="font-size:9px;color:rgba(200,169,110,0.4);margin-top:2px;">ID: ${p.id}</div>
+        <div class="crew-item-detail">${p.nameEN||''} · 📱${p.phone||'-'}</div>
+        <div class="crew-item-id">ID: ${p.id||''}</div>
       </div>`;
     });
   }
-  // Participants
-  const sessions=res.partSessions||[];
-  const sessionLabel=sessions.length>0?sessions.join(' / '):'Today';
-  html+=`<div class="sec-title" style="margin-top:24px">Participants · ${sessionLabel}</div>`;
+
+  // Participants overview
+  const partTotal=Number(res.partTotal)||0;
+  const partCheckedIn=Number(res.partTotalCheckedIn)||0;
+  const partNotYet=partTotal-partCheckedIn;
+  const partSessions=(res.partSessions||[]).join(' / ')||'Today';
+  html+=`<div class="sec-title" style="margin-top:24px">Participants · ${partSessions}</div>`;
   html+=`<div class="stat-row">
-    <div class="stat-box"><div class="stat-num">${res.partTotal}</div><div class="stat-label">Total</div></div>
-    <div class="stat-box"><div class="stat-num">${res.partTotalCheckedIn}</div><div class="stat-label">Checked In</div></div>
-    <div class="stat-box"><div class="stat-num">${res.partTotal-res.partTotalCheckedIn}</div><div class="stat-label">Not Yet</div></div>
+    <div class="stat-box"><div class="stat-num">${partTotal}</div><div class="stat-label">Total</div></div>
+    <div class="stat-box"><div class="stat-num">${partCheckedIn}</div><div class="stat-label">Checked In</div></div>
+    <div class="stat-box"><div class="stat-num">${partNotYet}</div><div class="stat-label">Not Yet</div></div>
   </div>`;
-  html+=renderTeamBlocks(res.partTeamData,false);
+
+  // Participants by team
+  html+=`<div class="sec-title">By Team</div>`;
+  const teamData=res.partTeamData||{};
+  Object.entries(teamData).forEach(([team,info])=>{
+    const total=Number(info.total)||0;
+    const checked=Number(info.checkedIn)||0;
+    const notYet=total-checked;
+    html+=`<div class="team-block">
+      <div class="team-header">
+        <div class="team-name-label">${team}</div>
+        <div class="team-count">${checked}/${total}</div>
+      </div>
+    </div>`;
+  });
+
   document.getElementById('statusBody').innerHTML=html;
 }
 
 function renderParticipantStatus(res){
   let html='';
-  const sessions=res.sessions||[];
-  const sessionLabel=sessions.length>0?sessions.join(' / '):'Today';
-  html+=`<div class="sec-title">${sessionLabel}</div>`;
-  html+=`<div class="stat-row">
-    <div class="stat-box"><div class="stat-num">${res.total}</div><div class="stat-label">Total</div></div>
-    <div class="stat-box"><div class="stat-num">${res.totalCheckedIn}</div><div class="stat-label">Checked In</div></div>
-    <div class="stat-box"><div class="stat-num">${res.total-res.totalCheckedIn}</div><div class="stat-label">Not Yet</div></div>
-  </div>`;
-  html+=renderTeamBlocks(res.teamData,true);
-  document.getElementById('statusBody').innerHTML=html;
-}
+  const total=Number(res.total)||0;
+  const checkedIn=Number(res.totalCheckedIn)||0;
+  const notYet=total-checkedIn;
+  const sessions=(res.sessions||[]).join(' / ')||'Today';
 
-function renderTeamBlocks(teamData,showNotCheckedIn){
-  let html='<div class="sec-title">By Team</div>';
+  html+=`<div class="sec-title">${sessions}</div>`;
+  html+=`<div class="stat-row">
+    <div class="stat-box"><div class="stat-num">${total}</div><div class="stat-label">Total</div></div>
+    <div class="stat-box"><div class="stat-num">${checkedIn}</div><div class="stat-label">Checked In</div></div>
+    <div class="stat-box"><div class="stat-num">${notYet}</div><div class="stat-label">Not Yet</div></div>
+  </div>`;
+
+  html+=`<div class="sec-title">By Team</div>`;
+  const teamData=res.teamData||{};
   Object.entries(teamData).forEach(([team,info])=>{
-    const notYet=info.notCheckedIn||[];
+    const tTotal=Number(info.total)||0;
+    const tChecked=Number(info.checkedIn)||0;
+    const tNotYet=tTotal-tChecked;
+    const notList=info.notCheckedIn||[];
     html+=`<div class="team-block">
       <div class="team-header">
-        <div class="team-name-label">${team}</div>
-        <div class="team-count">${info.checkedIn}/${info.total} checked in</div>
+        <div class="team-name-label">${team} <span style="font-size:10px;color:var(--muted);font-family:'Montserrat',sans-serif;">(${tTotal}人)</span></div>
+        <div class="team-count">${tChecked}/${tTotal}</div>
       </div>`;
-    if(showNotCheckedIn&&notYet.length>0){
-      html+='<div class="not-checked-list">';
-      notYet.forEach(p=>{
-        html+=`<div class="not-checked-item">
-          <div class="nci-id">${p.id}</div>
+    if(notList.length>0){
+      html+=`<div class="not-checked-list">`;
+      notList.forEach(p=>{
+        html+=`<div class="nci-item">
+          <div class="nci-id">${p.id||''}</div>
           <div class="nci-info">
-            <div class="nci-name">${p.nameCN}</div>
-            <div class="nci-detail">${p.nameEN} · 📱${p.phone||'-'} · 房${p.room||'-'}</div>
+            <div class="nci-name">${p.nameCN||''}</div>
+            <div class="nci-detail">${p.nameEN||''} · 📱${p.phone||'-'} · 房${p.room||'-'}</div>
           </div>
         </div>`;
       });
-      html+='</div>';
+      html+=`</div>`;
     }
-    html+='</div>';
+    html+=`</div>`;
   });
-  return html;
+
+  document.getElementById('statusBody').innerHTML=html;
 }
 
 function renderTeamStatus(res){
   let html='';
-  const sessions=res.sessions||[];
-  const sessionLabel=sessions.length>0?sessions.join(' / '):'Today';
-  html+=`<div class="sec-title">${res.teamName} · ${sessionLabel}</div>`;
+  const total=Number(res.total)||0;
+  const checkedIn=Number(res.checkedIn)||0;
+  const notYet=total-checkedIn;
+  const teamName=res.teamName||'';
+  const sessions=(res.sessions||[]).join(' / ')||'Today';
+
+  html+=`<div class="sec-title">${teamName} · ${sessions}</div>`;
   html+=`<div class="stat-row">
-    <div class="stat-box"><div class="stat-num">${res.total}</div><div class="stat-label">Total</div></div>
-    <div class="stat-box"><div class="stat-num">${res.checkedIn}</div><div class="stat-label">Checked In</div></div>
-    <div class="stat-box"><div class="stat-num">${res.total-res.checkedIn}</div><div class="stat-label">Not Yet</div></div>
+    <div class="stat-box"><div class="stat-num">${checkedIn}</div><div class="stat-label">Checked In</div></div>
+    <div class="stat-box"><div class="stat-num">${notYet}</div><div class="stat-label">Not Yet</div></div>
   </div>`;
-  const notYet=res.notCheckedIn||[];
-  if(notYet.length>0){
-    html+=`<div class="sec-title">Not Checked In (${notYet.length})</div>`;
-    notYet.forEach(p=>{
-      html+=`<div class="person-row">
-        <div style="display:flex;justify-content:space-between;">
-          <div style="font-family:'Noto Serif SC',serif;font-size:13px;color:var(--text);letter-spacing:2px;">${p.nameCN}</div>
-          <div style="font-size:9px;color:rgba(200,169,110,0.4);">ID: ${p.id}</div>
+
+  const notList=res.notCheckedIn||[];
+  if(notList.length>0){
+    html+=`<div class="sec-title">Not Checked In (${notList.length})</div>`;
+    notList.forEach(p=>{
+      html+=`<div class="crew-item">
+        <div class="crew-item-top">
+          <div class="crew-item-name">${p.nameCN||''}</div>
+          <div class="crew-item-id" style="font-size:9px;color:rgba(200,169,110,0.4);">ID: ${p.id||''}</div>
         </div>
-        <div style="font-size:10px;color:var(--muted);margin-top:3px;">${p.nameEN}</div>
-        <div style="font-size:10px;color:var(--muted);margin-top:2px;">📱 ${p.phone||'-'} · 房号 ${p.room||'-'}</div>
+        <div class="crew-item-detail">${p.nameEN||''}</div>
+        <div class="crew-item-detail">📱 ${p.phone||'-'} · 房号 ${p.room||'-'}</div>
       </div>`;
     });
   }else{
     html+='<div style="text-align:center;padding:16px 0;color:var(--gold);font-size:12px;letter-spacing:1px;">✓ All members checked in!</div>';
   }
+
   document.getElementById('statusBody').innerHTML=html;
 }
 
